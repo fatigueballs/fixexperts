@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "587407945519",
+    "firebase_url": "https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fixexperts-database",
+    "storage_bucket": "fixexperts-database.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587407945519:android:dd74c744f4ffff24173bda",
+        "android_client_info": {
+          "package_name": "com.aliumar.database_test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtphmVTEkX4zyznnZY4C7iX0LSFM-KMmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587407945519:android:f88ba0b3e0e39952173bda",
+        "android_client_info": {
+          "package_name": "com.aliumar.fypfinal1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtphmVTEkX4zyznnZY4C7iX0LSFM-KMmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587407945519:android:53b0d8462c00d9cf173bda",
+        "android_client_info": {
+          "package_name": "com.aliumar.fypself2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtphmVTEkX4zyznnZY4C7iX0LSFM-KMmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

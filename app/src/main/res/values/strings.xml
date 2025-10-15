@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">FixExperts</string>
+    <string name="login_title">Login or Sign Up</string>
+    <string name="login_enter_phone">Enter your phone number</string>
+    <string name="login_phone_hint">Phone Number</string>
+    <string name="login_country_code">+60</string>
+    <string name="login_helper_text">receive a 6-digit code via</string>
+    <string name="login_sms_button">SMS</string>
+    <string name="login_version">Version 0.0.2</string>
+
+    <string name="home_greeting">Hi, Afiq Kamar!</string>
+    <string name="home_search_hint">Search</string>
+    <string name="service_plumbing">Plumbing</string>
+    <string name="service_aircond">Aircond</string>
+    <string name="service_electrical">Electrical</string>
+    <string name="service_gas_tank">Gas Tank</string>
+    <string name="service_appliance">Appliance</string>
+    <string name="service_view_all">View All</string>
+    <string name="home_recommended">Recommended</string>
+    <string name="provider_ridwan_plumber">Ridwan Plumber Service</string>
+    <string name="provider_ridwan_plumber_short">Ridwan Plu…</string>
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_activity">Activity</string>
+    <string name="bottom_nav_messages">Messages</string>
+    <string name="bottom_nav_account">Account</string>
+
+    <string name="account_title">Account</string>
+    <string name="account_name">Afiq Kamar</string>
+    <string name="account_location">Shah Alam, Selangor</string>
+    <string name="account_rating">4.8</string>
+    <string name="account_balance_label">Balance</string>
+    <string name="account_balance_amount">RM51.43</string>
+    <string name="account_upcoming">Upcoming</string>
+    <string name="account_past_orders">Past Orders</string>
+    <string name="account_reviews">Reviews</string>
+</resources>
