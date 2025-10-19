@@ -1,61 +1,143 @@
 package com.aliumar.fypfinal1
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import android.widget.*
 import android.content.Intent
+import android.os.Bundle
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.database.FirebaseDatabase
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    private lateinit var mapView: MapView
+    private var map: GoogleMap? = null
+    private lateinit var textLatLng: TextView
+    private var selectedLatLng: LatLng? = null
+
+    private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_register)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        val registerUsername = findViewById<EditText>(R.id.registerUsername)
+        val registerEmail = findViewById<EditText>(R.id.registerEmail)
+        val registerPassword = findViewById<EditText>(R.id.registerPassword)
+        val repairmanCheck = findViewById<CheckBox>(R.id.repairmanTrue)
+        val registerButton = findViewById<Button>(R.id.buttonRegister)
+        val pickLocationButton = findViewById<Button>(R.id.buttonPickLocation)
+        textLatLng = findViewById(R.id.textLatLng)
+        mapView = findViewById(R.id.mapView)
+
+        // Initialize MapView
+        var mapViewBundle: Bundle? = null
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY)
+        }
+        mapView.onCreate(mapViewBundle)
+        mapView.getMapAsync(this)
+
+        val database = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val userRef = database.getReference("users")
+        val repairmenRef = database.getReference("repairmen")
+
+        pickLocationButton.setOnClickListener {
+            Toast.makeText(this, "Tap on the map to pick your location", Toast.LENGTH_SHORT).show()
         }
 
-        val inputUsername = findViewById<EditText>(R.id.registerUsername)
-        val inputPassword = findViewById<EditText>(R.id.registerPassword)
-        val inputEmail = findViewById<EditText>(R.id.registerEmail)
-        val isRepairman = findViewById<CheckBox>(R.id.repairmanTrue)
-        val buttonRegister = findViewById<Button>(R.id.buttonRegister)
-
-        val db = FirebaseDatabase.getInstance()
-        val usersRef = db.getReference("users")
-        val repairmenRef = db.getReference("repairmen")
-
-        buttonRegister.setOnClickListener {
-            val username = inputUsername.text.toString()
-            val email = inputEmail.text.toString()
-            val password = inputPassword.text.toString()
+        registerButton.setOnClickListener {
+            val username = registerUsername.text.toString().trim()
+            val email = registerEmail.text.toString().trim()
+            val password = registerPassword.text.toString().trim()
+            val isRepairman = repairmanCheck.isChecked
 
             if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (isRepairman.isChecked) {
-                val input = Repairman(username, email, password)
-                repairmenRef.child(username).setValue(input)
-                Toast.makeText(this, "Repairman registered successfully", Toast.LENGTH_SHORT).show()
+            val lat = selectedLatLng?.latitude ?: 0.0
+            val lng = selectedLatLng?.longitude ?: 0.0
+
+            if (isRepairman) {
+                val repairman = Repairman(
+                    username = username,
+                    email = email,
+                    password = password,
+                    latitude = lat,
+                    longitude = lng,
+                    rating = 0.0,
+                    storeName = "",
+                    specialties = listOf("")
+                )
+
+                repairmenRef.child(username).setValue(repairman)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Repairman registered!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+
             } else {
-                val input = User(username, email, password)
-                usersRef.child(username).setValue(input)
-                Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show()
+                val user = User(
+                    username = username,
+                    email = email,
+                    password = password,
+                    latitude = lat,
+                    longitude = lng,
+                    rating = 0.0
+                )
+
+                userRef.child(username).setValue(user)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "User registered!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
+        }
+    }
 
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        val defaultLocation = LatLng(3.139, 101.6869) // Kuala Lumpur
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10f))
 
+        // Tap map to set location
+        map?.setOnMapClickListener { latLng ->
+            map?.clear()
+            map?.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
+            selectedLatLng = latLng
+            textLatLng.text = "Latitude: ${latLng.latitude}, Longitude: ${latLng.longitude}"
+        }
+    }
+
+    // Lifecycle for MapView
+    override fun onResume() { super.onResume(); mapView.onResume() }
+    override fun onStart() { super.onStart(); mapView.onStart() }
+    override fun onStop() { super.onStop(); mapView.onStop() }
+    override fun onPause() { mapView.onPause(); super.onPause() }
+    override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }
+    override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        var mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY)
+        if (mapViewBundle == null) {
+            mapViewBundle = Bundle()
+            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
+        }
+        mapView.onSaveInstanceState(mapViewBundle)
     }
 }
-}
-
-

@@ -8,6 +8,10 @@ android {
     namespace 'com.aliumar.fypfinal1'
     compileSdk 36
 
+    buildFeatures {
+        viewBinding true
+    }
+
     defaultConfig {
         applicationId "com.aliumar.fypfinal1"
         minSdk 24
@@ -49,4 +53,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation platform('com.google.firebase:firebase-bom:34.3.0')
 
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.firebase:firebase-auth:22.1.1'
+    implementation 'com.google.firebase:firebase-database:20.1.0'     // or firestore if you prefer
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+
 }
+
+apply plugin: 'com.google.gms.google-services'
