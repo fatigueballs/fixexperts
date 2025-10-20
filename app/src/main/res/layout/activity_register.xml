@@ -86,6 +86,13 @@
                 android:text="Register"
                 android:layout_marginTop="20dp"/>
 
+            <Button
+                android:id="@+id/buttonBackToLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Back to Login"
+                android:layout_marginTop="10dp"/>
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

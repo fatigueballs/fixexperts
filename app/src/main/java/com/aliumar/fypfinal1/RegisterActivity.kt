@@ -34,6 +34,14 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
         textLatLng = findViewById(R.id.textLatLng)
         mapView = findViewById(R.id.mapView)
 
+        val backToLoginButton = findViewById<Button>(R.id.buttonBackToLogin)
+
+        backToLoginButton.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         // Initialize MapView
         var mapViewBundle: Bundle? = null
         if (savedInstanceState != null) {
