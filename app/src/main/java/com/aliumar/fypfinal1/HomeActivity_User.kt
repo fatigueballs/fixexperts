@@ -1,23 +1,19 @@
 package com.aliumar.fypfinal1
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import android.widget.*
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.Button
 
 class HomeActivity_User : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_userhome)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContentView(R.layout.activity_home_user)
+
+        val btnRequest = findViewById<Button>(R.id.buttonRequestService)
+        btnRequest.setOnClickListener {
+            startActivity(Intent(this, UserServiceSelectionActivity::class.java))
         }
 
         val btnLogout = findViewById<Button>(R.id.btnLogout)
@@ -27,7 +23,6 @@ class HomeActivity_User : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
-
 
     }
 }
