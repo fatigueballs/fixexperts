@@ -88,9 +88,9 @@
         app:layout_constraintTop_toBottomOf="@id/loginPassword" />
 
     <Button
-        android:id="@+id/btnLogin2"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:id="@+id/buttonLogin"
+        android:layout_width="141dp"
+        android:layout_height="58dp"
         android:layout_marginTop="78dp"
         android:backgroundTint="#E5E0E6"
         android:fontFamily="@font/spartan_extrabold"
@@ -132,6 +132,6 @@
         app:layout_constraintBottom_toTopOf="@id/tvVersion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
