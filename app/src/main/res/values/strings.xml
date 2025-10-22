@@ -6,6 +6,8 @@
     <string name="login_country_code">+60</string>
     <string name="login_helper_text">receive a 6-digit code via</string>
     <string name="login_sms_button">SMS</string>
+    <string name="login_terms_and_conditions">By logging in or registering, you agree to our Terms of Service, Privacy Policy and Personal Data
+    Protection Policy</string>
     <string name="login_version">Version 0.0.2</string>
 
     <string name="home_greeting">Hi, Afiq Kamar!</string>
