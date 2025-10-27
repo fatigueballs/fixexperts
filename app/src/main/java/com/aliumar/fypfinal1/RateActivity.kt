@@ -42,7 +42,8 @@ class RateActivity : AppCompatActivity() {
             db.child(ratingId).setValue(ratingData)
                 .addOnSuccessListener {
                     FirebaseDatabase.getInstance().getReference("serviceRequests")
-                        .child(requestId).child("repairmanRated").setValue(true)
+                        // FIX: Change 'repairmanRated' to 'userRated' since the user performs the rating
+                        .child(requestId).child("userRated").setValue(true)
 
                     Toast.makeText(this, "Rating submitted!", Toast.LENGTH_SHORT).show()
                     finish()

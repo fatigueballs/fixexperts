@@ -34,6 +34,7 @@
         <activity android:name=".RepairmanListActivity"></activity>
         <activity android:name=".RepairmanRequestsActivity"></activity>
         <activity android:name=".RateActivity"></activity>
+        <activity android:name=".UserActivityActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

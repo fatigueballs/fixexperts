@@ -22,24 +22,32 @@ class RequestAdapter(
         val request = requests[position]
         holder.textUserName.text = "From: ${request.userName}"
         holder.textDescription.text = "Service: ${request.serviceType}"
-        holder.textStatus.text = "Status: ${request.status}"
 
-        // Show action buttons dynamically based on current status
-        when (request.status) {
-            "Pending" -> {
+        // Logic to determine button visibility and status text for Repairman
+        holder.buttonAccept.visibility = View.GONE
+        holder.buttonDecline.visibility = View.GONE
+        holder.buttonDone.visibility = View.GONE
+        holder.buttonDone.text = "Done" // Reset button text
+
+        when {
+            request.status == "Pending" -> {
+                holder.textStatus.text = "Status: Pending"
                 holder.buttonAccept.visibility = View.VISIBLE
                 holder.buttonDecline.visibility = View.VISIBLE
-                holder.buttonDone.visibility = View.GONE
             }
-            "Accepted" -> {
-                holder.buttonAccept.visibility = View.GONE
-                holder.buttonDecline.visibility = View.GONE
-                holder.buttonDone.visibility = View.VISIBLE
+            request.status == "Accepted" || request.jobCompletedByRepairman -> {
+                if (request.jobCompletedByRepairman && request.paymentConfirmedByUser) {
+                    holder.textStatus.text = "Status: Fully Completed (Payment Confirmed)"
+                } else if (request.jobCompletedByRepairman) {
+                    holder.textStatus.text = "Status: Job Done - Awaiting User Payment"
+                } else {
+                    holder.textStatus.text = "Status: Accepted (In Progress)"
+                    holder.buttonDone.visibility = View.VISIBLE
+                    holder.buttonDone.text = "Mark Job Done"
+                }
             }
             else -> {
-                holder.buttonAccept.visibility = View.GONE
-                holder.buttonDecline.visibility = View.GONE
-                holder.buttonDone.visibility = View.GONE
+                holder.textStatus.text = "Status: ${request.status}"
             }
         }
 

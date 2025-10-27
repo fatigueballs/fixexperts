@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:elevation="4dp"
+    android:layout_margin="8dp">
+
+    <TextView
+        android:id="@+id/textRepairmanName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To: Repairman Name"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textServiceType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Service Type"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/textStatusUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status: Accepted"
+        android:layout_marginTop="4dp" />
+
+    <Button
+        android:id="@+id/buttonConfirmPayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm Payment &amp; Job Done"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/buttonRateRepairman"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rate Repairman"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+
+</LinearLayout>

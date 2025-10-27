@@ -16,6 +16,12 @@ class HomeActivity_User : AppCompatActivity() {
             startActivity(Intent(this, UserServiceSelectionActivity::class.java))
         }
 
+        // NEW: Button to view service activity
+        val btnViewActivity = findViewById<Button>(R.id.buttonViewActivity)
+        btnViewActivity.setOnClickListener {
+            startActivity(Intent(this, UserActivityActivity::class.java))
+        }
+
         val btnLogout = findViewById<Button>(R.id.btnLogout)
         btnLogout.setOnClickListener {
             val sharedPref = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)

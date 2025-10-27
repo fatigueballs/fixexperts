@@ -21,6 +21,12 @@
         android:layout_height="wrap_content"
         android:text="Request a Service"/>
 
+    <Button
+        android:id="@+id/buttonViewActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View My Service Activity"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogout"
         android:layout_width="100dp"

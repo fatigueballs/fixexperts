@@ -105,23 +105,26 @@ class RepairmanRequestsActivity : AppCompatActivity() {
     }
 
     private fun handleRequestAction(request: ServiceRequest, action: String) {
-        val newStatus = when (action) {
-            "accept" -> "Accepted"
-            "decline" -> "Declined"
-            "done" -> "Completed"
-            else -> request.status
+        val updates = HashMap<String, Any>()
+
+        when (action) {
+            "accept" -> updates["status"] = "Accepted"
+            "decline" -> updates["status"] = "Declined"
+            "done" -> {
+                // Repairman confirms job is complete. Next step is user payment confirmation.
+                updates["jobCompletedByRepairman"] = true
+                // Update status for clarity in the Repairman's view
+                updates["status"] = "Job Completed by Repairman"
+            }
+            else -> return
         }
 
-        dbRef.child(request.id).child("status").setValue(newStatus)
+        dbRef.child(request.id).updateChildren(updates)
             .addOnSuccessListener {
-                Toast.makeText(this, "Request $newStatus", Toast.LENGTH_SHORT).show()
-
-                if (newStatus == "Completed") {
-                    val intent = Intent(this, RateActivity::class.java)
-                    intent.putExtra("requestId", request.id)
-                    intent.putExtra("userId", request.userId)
-                    intent.putExtra("repairmanId", request.repairmanId)
-                    startActivity(intent)
+                if (action == "done") {
+                    Toast.makeText(this, "Job marked as completed. Awaiting user payment confirmation.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "Request ${updates["status"]}", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener {
