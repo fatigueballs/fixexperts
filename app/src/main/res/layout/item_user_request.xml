@@ -34,7 +34,7 @@
         android:id="@+id/buttonConfirmPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Confirm Payment &amp; Job Done"
+        android:text="Confirm Job Done"
         android:layout_marginTop="8dp"
         android:visibility="gone" />
 

@@ -27,7 +27,8 @@ class UserActivityActivity : AppCompatActivity() {
         requestList = mutableListOf()
         adapter = UserRequestAdapter(
             requestList,
-            { request -> handlePaymentConfirmation(request) },
+            // RENAME/REPURPOSE: This handler now confirms the job is done by the user
+            { request -> handleJobDoneConfirmation(request) },
             { request -> launchRatingActivity(request) }
         )
 
@@ -101,19 +102,20 @@ class UserActivityActivity : AppCompatActivity() {
             })
     }
 
-    private fun handlePaymentConfirmation(request: ServiceRequest) {
+    // RENAMED/REPURPOSED: User now confirms the job is done
+    private fun handleJobDoneConfirmation(request: ServiceRequest) {
         val updates = HashMap<String, Any>()
-        // User confirms cash/QR payment is done
-        updates["paymentConfirmedByUser"] = true
-        // Set the final status to "Completed" once payment is confirmed
-        updates["status"] = "Completed"
+        // User confirms the job is physically done
+        updates["userConfirmedJobDone"] = true
+        // Update status for clarity, awaiting RM to confirm payment.
+        updates["status"] = "Job Confirmed by User"
 
         dbRef.child(request.id).updateChildren(updates)
             .addOnSuccessListener {
-                Toast.makeText(this, "Payment confirmed. You can now rate the repairman.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Job completion confirmed. Awaiting repairman's payment confirmation.", Toast.LENGTH_LONG).show()
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Failed to confirm payment", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to confirm job completion", Toast.LENGTH_SHORT).show()
             }
     }
 

@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class UserRequestAdapter(
+    // The lambda name will remain the same but the action is now Confirm Job Done
     private val requests: List<ServiceRequest>,
     private val onConfirmPayment: (ServiceRequest) -> Unit,
     private val onRate: (ServiceRequest) -> Unit
@@ -28,16 +29,26 @@ class UserRequestAdapter(
         holder.buttonConfirmPayment.visibility = View.GONE
         holder.buttonRateRepairman.visibility = View.GONE
 
+        // Change button text to reflect new role (User confirms job is done)
+        holder.buttonConfirmPayment.text = "Confirm Job Done"
+
         when {
-            request.paymentConfirmedByUser && request.userRated -> {
-                holder.textStatusUser.text = "Status: Fully Completed and Rated"
+            request.userConfirmedJobDone && request.repairmanConfirmedPayment -> {
+                // Job and Payment confirmed
+                if (request.userRated) {
+                    holder.textStatusUser.text = "Status: Fully Completed and Rated"
+                } else {
+                    holder.textStatusUser.text = "Status: Completed - Rate Now!"
+                    holder.buttonRateRepairman.visibility = View.VISIBLE
+                }
             }
-            request.paymentConfirmedByUser && !request.userRated -> {
-                holder.textStatusUser.text = "Status: Payment Confirmed - Rate Now!"
-                holder.buttonRateRepairman.visibility = View.VISIBLE
+            request.userConfirmedJobDone -> {
+                // User confirmed job done, awaiting RM payment confirmation
+                holder.textStatusUser.text = "Status: Job Done - Awaiting Payment Confirmation"
             }
-            request.jobCompletedByRepairman -> {
-                holder.textStatusUser.text = "Status: Job Done - Tap to Confirm Payment"
+            request.status == "Accepted" -> {
+                // RM accepted, User needs to confirm job done (which means service is physically completed)
+                holder.textStatusUser.text = "Status: Accepted (Tap when job is complete)"
                 holder.buttonConfirmPayment.visibility = View.VISIBLE
             }
             else -> {
@@ -45,6 +56,7 @@ class UserRequestAdapter(
             }
         }
 
+        // The click handler's name remains `onConfirmPayment` but it performs "Confirm Job Done" logic
         holder.buttonConfirmPayment.setOnClickListener { onConfirmPayment(request) }
         holder.buttonRateRepairman.setOnClickListener { onRate(request) }
     }

@@ -58,7 +58,8 @@ class ChooseRepairmanActivity : AppCompatActivity() {
         }
 
         repairmenList = mutableListOf()
-        adapter = RepairmanAdapter(repairmenList) { repairman ->
+        // MODIFIED: Pass 'this' (Context) to the RepairmanAdapter
+        adapter = RepairmanAdapter(this, repairmenList) { repairman ->
             // Calling the new authentication check that relies on custom login state
             checkCustomAuthAndShowDateTimePicker(repairman)
         }

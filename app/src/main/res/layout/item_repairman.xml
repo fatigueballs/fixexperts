@@ -37,6 +37,14 @@
             android:layout_marginTop="2dp"
             android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/textLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location: Shah Alam, Selangor"
+            android:layout_marginTop="2dp"
+            android:textSize="14sp" />
+
         <Button
             android:id="@+id/buttonRequest"
             android:layout_width="match_parent"
@@ -44,5 +52,5 @@
             android:text="Request Service"
             android:layout_marginTop="8dp" />
 
-</LinearLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

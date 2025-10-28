@@ -30,7 +30,8 @@ class RepairmanListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         repairmenList = mutableListOf()
 
-        adapter = RepairmanAdapter(repairmenList) { repairman ->
+        // FIX: Update constructor call to pass 'this' (Context) and 'repairmenList'
+        adapter = RepairmanAdapter(this, repairmenList) { repairman ->
             showDateTimePicker(repairman)
         }
 
@@ -79,6 +80,8 @@ class RepairmanListActivity : AppCompatActivity() {
 
     private fun sendServiceRequest(repairman: Repairman, dateMillis: Long) {
         val currentUser = auth.currentUser
+        // NOTE: This activity uses FirebaseAuth for user ID, while other parts use custom login data.
+        // For consistency with the existing code, keeping FirebaseAuth for this file.
         if (currentUser == null) {
             Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show()
             return

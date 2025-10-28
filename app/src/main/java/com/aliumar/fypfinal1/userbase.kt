@@ -22,5 +22,7 @@ data class Repairman(
     val storeName: String = "",
     val specialties: List<String> = listOf(""),
     var avgRating: Double = 0.0,
-    var ratingCount: Int = 0
+    var ratingCount: Int = 0,
+    // The adapter now calculates the city dynamically
+    val city: String = ""
 )

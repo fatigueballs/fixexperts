@@ -14,7 +14,9 @@ data class ServiceRequest(
     var timestamp: Long = 0L,
     var userRated: Boolean = false,
     var repairmanRated: Boolean = false,
-    // NEW: Fields for multi-step completion and payment
-    var jobCompletedByRepairman: Boolean = false, // Repairman confirms the job is physically done
-    var paymentConfirmedByUser: Boolean = false // User confirms the payment is made (cash/QR/etc.)
+    // NEW: Fields for multi-step completion and payment, roles SWAPPED.
+    // This is now set by the USER to confirm the job is physically done
+    var userConfirmedJobDone: Boolean = false,
+    // This is now set by the REPAIRMAN to confirm the payment is received
+    var repairmanConfirmedPayment: Boolean = false
 )

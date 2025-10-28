@@ -27,6 +27,7 @@ class RepairmanRequestsActivity : AppCompatActivity() {
         recyclerViewRequests = findViewById(R.id.recyclerViewRequests)
         recyclerViewRequests.layoutManager = LinearLayoutManager(this)
 
+        // The adapter's click handler passes the correct action string
         requestList = mutableListOf()
         adapter = RequestAdapter(requestList) { request, action ->
             handleRequestAction(request, action)
@@ -110,21 +111,23 @@ class RepairmanRequestsActivity : AppCompatActivity() {
         when (action) {
             "accept" -> updates["status"] = "Accepted"
             "decline" -> updates["status"] = "Declined"
-            "done" -> {
-                // Repairman confirms job is complete. Next step is user payment confirmation.
-                updates["jobCompletedByRepairman"] = true
-                // Update status for clarity in the Repairman's view
-                updates["status"] = "Job Completed by Repairman"
+            // NEW FLOW: Repairman now confirms payment, which finalizes the job status.
+            "confirm_payment" -> {
+                if (!request.userConfirmedJobDone) {
+                    Toast.makeText(this, "Cannot confirm payment: User has not marked the job as done.", Toast.LENGTH_LONG).show()
+                    return
+                }
+                updates["repairmanConfirmedPayment"] = true
+                updates["status"] = "Completed" // Final status
             }
             else -> return
         }
 
         dbRef.child(request.id).updateChildren(updates)
             .addOnSuccessListener {
-                if (action == "done") {
-                    Toast.makeText(this, "Job marked as completed. Awaiting user payment confirmation.", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(this, "Request ${updates["status"]}", Toast.LENGTH_SHORT).show()
+                when (action) {
+                    "confirm_payment" -> Toast.makeText(this, "Payment confirmed. Job is complete.", Toast.LENGTH_LONG).show()
+                    else -> Toast.makeText(this, "Request ${updates["status"]}", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener {

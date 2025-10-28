@@ -27,7 +27,7 @@ class RequestAdapter(
         holder.buttonAccept.visibility = View.GONE
         holder.buttonDecline.visibility = View.GONE
         holder.buttonDone.visibility = View.GONE
-        holder.buttonDone.text = "Done" // Reset button text
+        holder.buttonDone.text = "Confirm Payment" // Renamed button text for new flow
 
         when {
             request.status == "Pending" -> {
@@ -35,15 +35,19 @@ class RequestAdapter(
                 holder.buttonAccept.visibility = View.VISIBLE
                 holder.buttonDecline.visibility = View.VISIBLE
             }
-            request.status == "Accepted" || request.jobCompletedByRepairman -> {
-                if (request.jobCompletedByRepairman && request.paymentConfirmedByUser) {
+            request.status == "Accepted" || request.userConfirmedJobDone -> {
+                if (request.userConfirmedJobDone && request.repairmanConfirmedPayment) {
                     holder.textStatus.text = "Status: Fully Completed (Payment Confirmed)"
-                } else if (request.jobCompletedByRepairman) {
-                    holder.textStatus.text = "Status: Job Done - Awaiting User Payment"
+                } else if (request.userConfirmedJobDone) {
+                    // NEW FLOW: Job done is confirmed by User, now RM confirms payment
+                    holder.textStatus.text = "Status: Job Done by User - Await Payment Confirmation"
+                    if (!request.repairmanConfirmedPayment) {
+                        holder.buttonDone.visibility = View.VISIBLE
+                    }
+                } else if (request.status == "Accepted") {
+                    holder.textStatus.text = "Status: Accepted (Awaiting User Job Confirmation)"
                 } else {
                     holder.textStatus.text = "Status: Accepted (In Progress)"
-                    holder.buttonDone.visibility = View.VISIBLE
-                    holder.buttonDone.text = "Mark Job Done"
                 }
             }
             else -> {
@@ -53,7 +57,8 @@ class RequestAdapter(
 
         holder.buttonAccept.setOnClickListener { onAction(request, "accept") }
         holder.buttonDecline.setOnClickListener { onAction(request, "decline") }
-        holder.buttonDone.setOnClickListener { onAction(request, "done") }
+        // The action for buttonDone is now "confirm_payment"
+        holder.buttonDone.setOnClickListener { onAction(request, "confirm_payment") }
     }
 
     override fun getItemCount(): Int = requests.size
