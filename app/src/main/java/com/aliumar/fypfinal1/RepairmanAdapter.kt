@@ -37,11 +37,15 @@ class RepairmanAdapter(
         holder.name.text = repairman.username
         holder.specialties.text = "Specialties: ${repairman.specialties.joinToString(", ")}"
 
-        // Display rating
-        holder.rating.text = "Rating: ${String.format("%.1f", repairman.avgRating)} (${repairman.ratingCount} reviews)"
-
-        // Use the real geocoding function
-        holder.location.text = "Location: ${getCityFromCoordinates(repairman.latitude, repairman.longitude)}"
+        // FIX: Display Rating Logic
+        val ratingText = if (repairman.ratingCount > 0) {
+            // Format to one decimal place
+            String.format("Rating: %.1f (%d reviews)", repairman.avgRating, repairman.ratingCount)
+        } else {
+            "Rating: Unrated"
+        }
+        holder.rating.text = ratingText
+        // END FIX
 
         holder.requestBtn.setOnClickListener { onRequestClick(repairman) }
     }
