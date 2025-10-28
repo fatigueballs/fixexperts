@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // Initialize Firebase references
+        // Initialize Firebase references (test)
         val database = FirebaseDatabase.getInstance(
             "https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/"
         )
