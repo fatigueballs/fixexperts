@@ -8,10 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.content.Context
 import android.location.Geocoder
+import android.os.Handler // ADDED
+import android.os.Looper // ADDED
 import java.util.Locale
 
 class RepairmanAdapter(
-    // MODIFIED: Added Context to the constructor
+// MODIFIED: Added Context to the constructor
     private val context: Context,
     private val repairmen: List<Repairman>,
     private val onRequestClick: (Repairman) -> Unit
@@ -45,6 +47,23 @@ class RepairmanAdapter(
             "Rating: Unrated"
         }
         holder.rating.text = ratingText
+        // END FIX
+
+        // START FIX: Fetch location using reverse geocoding on a background thread
+        holder.location.text = "Location: Loading..." // Temporary text while loading
+
+        Thread {
+            // This is the correct, but synchronous, call to the existing geocoding logic
+            val city = getCityFromCoordinates(repairman.latitude, repairman.longitude)
+
+            // Use Handler to update the UI element on the main thread
+            Handler(Looper.getMainLooper()).post {
+                // We use holder.adapterPosition to check if the ViewHolder is still bound to the same position
+                if (holder.adapterPosition == position) {
+                    holder.location.text = "Location: $city"
+                }
+            }
+        }.start()
         // END FIX
 
         holder.requestBtn.setOnClickListener { onRequestClick(repairman) }

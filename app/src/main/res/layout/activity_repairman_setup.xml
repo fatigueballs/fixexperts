@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".RepairmanSetupActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Complete Your Professional Profile"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select all specialties you offer:"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            android:layout_marginBottom="8dp" />
+
+        <CheckBox android:id="@+id/cbAircon" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Air Conditioning Fix" />
+        <CheckBox android:id="@+id/cbGas" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Gas Tank Replacement" />
+        <CheckBox android:id="@+id/cbPlumbing" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Plumbing" />
+        <CheckBox android:id="@+id/cbKitchen" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Kitchen Appliance Fix" />
+        <CheckBox android:id="@+id/cbElectrician" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Electrician / Wiring" />
+        <CheckBox android:id="@+id/cbCleaning" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cleaning Service" android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Service Description (Optional)"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/editServiceDescription"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="top"
+            android:hint="e.g., I specialize in inverter AC repairs and custom plumbing solutions."
+            android:padding="8dp"
+            android:background="@drawable/input_field_background"
+            android:inputType="textMultiLine"
+            android:maxLength="500"
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/buttonSaveProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Profile" />
+
+    </LinearLayout>
+</ScrollView>

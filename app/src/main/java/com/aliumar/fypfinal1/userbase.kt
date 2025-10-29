@@ -20,9 +20,14 @@ data class Repairman(
     val longitude: Double = 0.0,
     val rating: Double = 0.0,
     val storeName: String = "",
-    val specialties: List<String> = listOf(""),
+    // Initialized as empty list to track specialties
+    val specialties: List<String> = listOf(),
+    // NEW: Service description field
+    var serviceDescription: String = "",
     var avgRating: Double = 0.0,
     var ratingCount: Int = 0,
+    // NEW: Flag to force setup completion after registration
+    var isSetupComplete: Boolean = false,
     // The adapter now calculates the city dynamically
     val city: String = ""
 )

@@ -73,6 +73,7 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
             val lng = selectedLatLng?.longitude ?: 0.0
 
             if (isRepairman) {
+                // MODIFIED: Initializing new fields
                 val repairman = Repairman(
                     username = username,
                     email = email,
@@ -81,12 +82,14 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
                     longitude = lng,
                     rating = 0.0,
                     storeName = "",
-                    specialties = listOf("")
+                    specialties = listOf(), // Empty initially
+                    serviceDescription = "", // Empty initially
+                    isSetupComplete = false // Must complete setup later
                 )
 
                 repairmenRef.child(username).setValue(repairman)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "Repairman registered!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Repairman registered! Please login to complete your profile setup.", Toast.LENGTH_LONG).show()
                         startActivity(Intent(this, LoginActivity::class.java))
                         finish()
                     }

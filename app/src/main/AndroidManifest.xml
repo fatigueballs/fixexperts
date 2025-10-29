@@ -28,6 +28,7 @@
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".HomeActivity_User"></activity>
         <activity android:name=".HomeActivity_RM"></activity>
+        <activity android:name=".RepairmanSetupActivity"></activity> <!-- NEW ACTIVITY REGISTERED -->
         <activity android:name=".UserServiceSelectionActivity"></activity>
         <activity android:name=".ChooseRepairmanActivity"></activity>
         <activity android:name=".UserDashboardActivity"></activity>
