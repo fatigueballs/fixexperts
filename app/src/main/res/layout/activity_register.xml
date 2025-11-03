@@ -6,6 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".RegisterActivity">
 
     <ScrollView
@@ -23,54 +24,97 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="210dp"
-                android:layout_height="197dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="48dp"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/logo"
-                android:layout_gravity="center"/>
-
-            <EditText
-                android:id="@+id/registerUsername"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Username"
-                android:inputType="textPersonName"
-                android:layout_marginTop="10dp"/>
-
-            <EditText
-                android:id="@+id/registerEmail"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="E-mail"
-                android:inputType="textEmailAddress"
-                android:layout_marginTop="10dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/registerPassword"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Password"
+                android:layout_width="376dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/input_field_background"
+                android:fontFamily="@font/spartan_extrabold"
+                android:hint="Create Password"
                 android:inputType="textPassword"
-                android:layout_marginTop="10dp"/>
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/registerEmail" />
 
             <CheckBox
                 android:id="@+id/repairmanTrue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Are you a repairman?"
+                android:fontFamily="@font/spartan_extrabold"
+                android:textColor="@color/icon_color_dark"
                 android:layout_marginTop="15dp"/>
+
+            <EditText
+                android:id="@+id/registerUsername"
+                android:layout_width="376dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/input_field_background"
+                android:fontFamily="@font/spartan_extrabold"
+                android:hint="Username"
+                android:inputType="textPersonName"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView" />
+
+            <EditText
+                android:id="@+id/registerEmail"
+                android:layout_width="376dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:autofillHints="emailAddress"
+                android:background="@drawable/input_field_background"
+                android:fontFamily="@font/spartan_extrabold"
+                android:hint="Email Address"
+                android:inputType="textEmailAddress"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/registerUsername" />
 
             <Button
                 android:id="@+id/buttonPickLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="240dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="2dp"
+                android:backgroundTint="@color/primary_blue"
+                android:fontFamily="@font/spartan_extrabold"
+                android:paddingVertical="5dp"
                 android:text="Pick Location on Map"
-                android:layout_marginTop="10dp"/>
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
 
             <TextView
                 android:id="@+id/textLatLng"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Latitude: -, Longitude: -"
+                android:textColor="@color/icon_color_dark"
+                android:fontFamily="@font/spartan_extrabold"
                 android:layout_marginTop="10dp"/>
 
             <com.google.android.gms.maps.MapView
@@ -81,17 +125,61 @@
 
             <Button
                 android:id="@+id/buttonRegister"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="280dp"
+                android:layout_height="53dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/primary_blue"
+                android:fontFamily="@font/spartan_extrabold"
+                android:paddingVertical="5dp"
                 android:text="Register"
-                android:layout_marginTop="20dp"/>
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <Button
                 android:id="@+id/buttonBackToLogin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="280dp"
+                android:layout_height="53dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/primary_blue"
+                android:fontFamily="@font/spartan_extrabold"
+                android:paddingVertical="5dp"
                 android:text="Back to Login"
-                android:layout_marginTop="10dp"/>
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/terms"
+                android:layout_width="356dp"
+                android:layout_height="47dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/spartan_extrabold"
+                android:text="@string/login_terms_and_conditions"
+                android:textAlignment="center"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@id/tvVersion"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tvVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/spartan_extrabold"
+                android:text="@string/login_version"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/buttonBackToLogin" />
+
 
         </LinearLayout>
     </ScrollView>

@@ -1,65 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:background="@drawable/background"
     tools:context=".RepairmanSetupActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Complete Your Professional Profile"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/spartan_extrabold"
             android:gravity="center"
-            android:layout_marginBottom="16dp" />
+            android:text="Complete Your Professional Profile"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="18sp"
+            android:layout_marginTop="48dp" />
 
-        <TextView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select all specialties you offer:"
-            android:textSize="16sp"
-            android:textStyle="italic"
-            android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginTop="20dp">
 
-        <CheckBox android:id="@+id/cbAircon" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Air Conditioning Fix" />
-        <CheckBox android:id="@+id/cbGas" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Gas Tank Replacement" />
-        <CheckBox android:id="@+id/cbPlumbing" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Plumbing" />
-        <CheckBox android:id="@+id/cbKitchen" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Kitchen Appliance Fix" />
-        <CheckBox android:id="@+id/cbElectrician" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Electrician / Wiring" />
-        <CheckBox android:id="@+id/cbCleaning" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Cleaning Service" android:layout_marginBottom="16dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Your Specialties"
+                    android:fontFamily="@font/spartan_extrabold"
+                    android:textColor="@color/icon_color_dark"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="8dp"/>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingVertical="8dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/cbAircon"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/spartan_extrabold"
+                        android:textColor="@color/icon_color_dark"
+                        android:text="Air Conditioning Fix" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/cbGas"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:fontFamily="@font/spartan_extrabold"
+                        android:textColor="@color/icon_color_dark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Gas Tank Replacement" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/cbPlumbing"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:fontFamily="@font/spartan_extrabold"
+                        android:textColor="@color/icon_color_dark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Plumbing" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/cbKitchen"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:fontFamily="@font/spartan_extrabold"
+                        android:textColor="@color/icon_color_dark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kitchen Appliance Fix" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/cbElectrician"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:fontFamily="@font/spartan_extrabold"
+                        android:textColor="@color/icon_color_dark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Electrician / Wiring" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/cbCleaning"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:fontFamily="@font/spartan_extrabold"
+                        android:textColor="@color/icon_color_dark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cleaning Service" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Service Description (Optional)"
-            android:textSize="16sp"
-            android:textStyle="italic"
-            android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginTop="20dp">
 
-        <EditText
-            android:id="@+id/editServiceDescription"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:gravity="top"
-            android:hint="e.g., I specialize in inverter AC repairs and custom plumbing solutions."
-            android:padding="8dp"
-            android:background="@drawable/input_field_background"
-            android:inputType="textMultiLine"
-            android:maxLength="500"
-            android:layout_marginBottom="24dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Service Description"
+                    android:textColor="@color/icon_color_dark"
+                    android:fontFamily="@font/spartan_extrabold"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="e.g., I specialize in inverter AC repairs..."
+                    app:counterEnabled="true"
+                    app:counterMaxLength="500"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editServiceDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"
+                        android:maxLength="500" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <Button
             android:id="@+id/buttonSaveProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Profile" />
+            android:text="Save Profile"
+            android:padding="14dp"
+            android:textSize="16sp"
+            android:fontFamily="@font/spartan_extrabold"
+            android:backgroundTint="@color/primary_blue"
+            android:layout_marginTop="20dp"
+            app:cornerRadius="12dp" />
 
     </LinearLayout>
 </ScrollView>

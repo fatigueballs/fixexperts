@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,12 +21,16 @@
             android:layout_height="wrap_content"
             android:text="Repairman Name"
             android:textStyle="bold"
+            android:fontFamily="@font/spartan_extrabold"
+            android:textColor="@color/icon_color_dark"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textSpecialties"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/spartan_extrabold"
+            android:textColor="@color/icon_color_dark"
             android:text="Specialties: Air Conditioning, Plumbing"
             android:layout_marginTop="4dp"
             android:textSize="14sp" />
@@ -34,6 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Rating: 4.8"
+            android:fontFamily="@font/spartan_extrabold"
+            android:textColor="@color/icon_color_dark"
             android:layout_marginTop="2dp"
             android:textSize="14sp" />
 
@@ -41,6 +49,8 @@
             android:id="@+id/textLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/spartan_extrabold"
+            android:textColor="@color/icon_color_dark"
             android:text="Location: Shah Alam, Selangor"
             android:layout_marginTop="2dp"
             android:textSize="14sp" />
@@ -48,8 +58,11 @@
         <Button
             android:id="@+id/buttonRequest"
             android:layout_width="match_parent"
+            android:fontFamily="@font/spartan_extrabold"
             android:layout_height="wrap_content"
             android:text="Request Service"
+            android:backgroundTint="@color/primary_blue"
+            android:textSize="14sp"
             android:layout_marginTop="8dp" />
 
     </LinearLayout>

@@ -39,9 +39,9 @@ class ChooseRepairmanActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         selectedService = intent.getStringExtra("SERVICE_TYPE") ?: ""
-        findViewById<TextView>(R.id.textSelectedService).text = "Selected Service: $selectedService"
+        findViewById<TextView>(R.id.textSelectedService).text = "$selectedService"
 
-        Log.d(TAG, "Selected Service: $selectedService")
+        Log.d(TAG, "$selectedService")
 
         dbRef = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("repairmen")
         auth = FirebaseAuth.getInstance()

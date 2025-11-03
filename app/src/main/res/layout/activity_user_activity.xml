@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="16dp"
+    android:background="@drawable/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        android:text="My Service Activity"
+        android:text="Activities"
         android:textSize="20sp"
+        android:textColor="@color/icon_color_dark"
+        android:fontFamily="@font/spartan_extrabold"
+        android:layout_marginTop="48dp"
+
         android:textStyle="bold"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        tools:ignore="HardcodedText" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="20dp"
         android:id="@+id/recyclerViewUserRequests"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

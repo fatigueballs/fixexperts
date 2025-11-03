@@ -1,59 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
+    android:background="@drawable/background"
     android:gravity="center_horizontal">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
         android:text="Select a Service Type"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/spartan_extrabold"
+        android:textColor="@color/icon_color_dark"
+        android:textSize="18sp"
         android:layout_marginBottom="20dp"/>
 
-    <Button
-        android:id="@+id/btnAircon"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Air Conditioning Fix"
-        android:layout_marginVertical="8dp" />
+        android:orientation="horizontal"
+        android:layout_marginTop="32dp"
+        android:baselineAligned="false"
+        android:weightSum="3">
 
-    <Button
-        android:id="@+id/btnGas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Gas Tank Replacement"
-        android:layout_marginVertical="8dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlumbing"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="174dp"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/spartan_extrabold"
+            android:maxLines="2"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/service_plumbing"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="10sp"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_plumbing"
+            app:iconGravity="textTop"
+            app:iconSize="50dp"
+            app:iconTint="@color/icon_color_dark"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp" />
 
-    <Button
-        android:id="@+id/btnPlumbing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Plumbing"
-        android:layout_marginVertical="8dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAircon"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="174dp"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/spartan_extrabold"
+            android:maxLines="2"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/service_aircond"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="10sp"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_aircond"
+            app:iconGravity="textTop"
+            app:iconSize="50dp"
+            app:iconTint="@color/icon_color_dark"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp" />
 
-    <Button
-        android:id="@+id/btnKitchen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Kitchen Appliance Fix"
-        android:layout_marginVertical="8dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnElectrician"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="174dp"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/spartan_extrabold"
+            android:maxLines="2"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/service_electrical"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="10sp"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_electrical"
+            app:iconGravity="textTop"
+            app:iconSize="50dp"
+            app:iconTint="@color/icon_color_dark"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp" />
 
-    <Button
-        android:id="@+id/btnElectrician"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Electrician / Wiring"
-        android:layout_marginVertical="8dp" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btnCleaning"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cleaning Service"
-        android:layout_marginVertical="8dp" />
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:weightSum="3">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGas"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="174dp"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:fontFamily="@font/spartan_extrabold"
+            android:maxLines="2"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/service_gas_tank"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="10sp"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_gas_tank"
+            app:iconGravity="textTop"
+            app:iconSize="50dp"
+            app:iconTint="@color/icon_color_dark"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnKitchen"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="174dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:text="@string/service_appliance"
+            android:fontFamily="@font/spartan_extrabold"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="10sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:maxLines="2"
+            app:icon="@drawable/ic_appliance"
+            app:iconTint="@color/icon_color_dark"
+            app:iconGravity="textTop"
+            app:iconSize="50dp"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp"
+            app:cornerRadius="16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCleaning"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="174dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:text="Cleaning"
+            android:fontFamily="@font/spartan_extrabold"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="10sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:maxLines="2"
+            app:icon="@drawable/ic_view_all"
+            app:iconTint="@color/icon_color_dark"
+            app:iconGravity="textTop"
+            app:iconSize="50dp"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp"
+            app:cornerRadius="16dp" />
+
+    </LinearLayout>
 
 </LinearLayout>
