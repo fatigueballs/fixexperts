@@ -40,7 +40,7 @@
 
     <EditText
         android:id="@+id/loginEmail"
-        android:layout_width="376dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:autofillHints=""
@@ -57,7 +57,7 @@
 
     <EditText
         android:id="@+id/loginPassword"
-        android:layout_width="376dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/input_field_background"
@@ -106,33 +106,30 @@
         app:layout_constraintTop_toBottomOf="@id/loginPassword" />
 
     <TextView
-        android:id="@+id/tvVersion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/spartan_extrabold"
-        android:text="@string/login_version"
-        android:textColor="@color/text_secondary"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
         android:id="@+id/terms"
-        android:layout_width="345dp"
-        android:layout_height="44dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="300dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="24dp"
         android:fontFamily="@font/spartan_extrabold"
         android:text="@string/login_terms_and_conditions"
         android:textAlignment="center"
         android:textColor="@color/text_secondary"
-        android:textSize="12sp"
+        android:textSize="11sp"
         app:layout_constraintBottom_toTopOf="@id/tvVersion"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.973" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/spartan_extrabold"
+        android:text="@string/login_version"
+        android:textColor="@color/text_secondary"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

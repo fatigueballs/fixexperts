@@ -12,7 +12,7 @@
         android:layout_height="40dp"
         android:scaleType="fitCenter"
         android:layout_marginStart="26dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Back"
         android:elevation="4dp"
@@ -37,7 +37,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="48dp"
             android:text="Select a Service Type"
             android:fontFamily="@font/spartan_extrabold"
             android:textColor="@color/icon_color_dark"
