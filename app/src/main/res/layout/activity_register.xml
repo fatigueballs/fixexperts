@@ -35,31 +35,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/registerPassword"
-                android:layout_width="376dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/input_field_background"
-                android:fontFamily="@font/spartan_extrabold"
-                android:hint="Create Password"
-                android:inputType="textPassword"
-                android:padding="12dp"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registerEmail" />
-
-            <CheckBox
-                android:id="@+id/repairmanTrue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Are you a repairman?"
-                android:fontFamily="@font/spartan_extrabold"
-                android:textColor="@color/icon_color_dark"
-                android:layout_marginTop="15dp"/>
-
-            <EditText
                 android:id="@+id/registerUsername"
                 android:layout_width="376dp"
                 android:layout_height="wrap_content"
@@ -92,10 +67,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/registerUsername" />
 
+            <EditText
+                android:id="@+id/registerPassword"
+                android:layout_width="376dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/input_field_background"
+                android:fontFamily="@font/spartan_extrabold"
+                android:hint="Create Password"
+                android:inputType="textPassword"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/registerEmail" />
+
+
+            <CheckBox
+                android:id="@+id/repairmanTrue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Are you a repairman?"
+                android:fontFamily="@font/spartan_extrabold"
+                android:textColor="@color/icon_color_dark"
+                android:layout_marginTop="15dp"/>
+
             <Button
                 android:id="@+id/buttonPickLocation"
-                android:layout_width="240dp"
-                android:layout_height="50dp"
+                android:layout_width="242dp"
+                android:layout_height="53dp"
                 android:layout_marginTop="2dp"
                 android:backgroundTint="@color/primary_blue"
                 android:fontFamily="@font/spartan_extrabold"
@@ -125,28 +126,13 @@
 
             <Button
                 android:id="@+id/buttonRegister"
-                android:layout_width="280dp"
+                android:layout_width="242dp"
                 android:layout_height="53dp"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/primary_blue"
                 android:fontFamily="@font/spartan_extrabold"
                 android:paddingVertical="5dp"
                 android:text="Register"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                app:cornerRadius="25dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
-
-            <Button
-                android:id="@+id/buttonBackToLogin"
-                android:layout_width="280dp"
-                android:layout_height="53dp"
-                android:layout_marginTop="10dp"
-                android:backgroundTint="@color/primary_blue"
-                android:fontFamily="@font/spartan_extrabold"
-                android:paddingVertical="5dp"
-                android:text="Back to Login"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 app:cornerRadius="25dp"
@@ -178,7 +164,7 @@
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/buttonBackToLogin" />
+                app:layout_constraintStart_toStartOf="@id/buttonRegister" />
 
 
         </LinearLayout>

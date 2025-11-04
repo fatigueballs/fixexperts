@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home_nav"
+        android:iconTint="@color/background_light_gray"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_activity"
+        android:icon="@drawable/ic_activity_nav"
+        android:iconTint="@color/background_light_gray"
+
+        android:title="Activity" />
+    <item
+        android:id="@+id/nav_messages"
+        android:icon="@drawable/ic_messages_nav"
+        android:iconTint="@color/background_light_gray"
+
+        android:title="Messages" />
+    <item
+        android:id="@+id/nav_account"
+        android:icon="@drawable/ic_account_nav"
+        android:iconTint="@color/background_light_gray"
+        android:title="Account" />
+</menu>
