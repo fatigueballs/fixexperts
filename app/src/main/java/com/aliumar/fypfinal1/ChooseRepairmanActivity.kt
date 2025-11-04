@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton // <-- IMPORT THIS
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,12 @@ class ChooseRepairmanActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_repairman)
+
+        // ADDED: Back button listener
+        val backButton = findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener {
+            finish() // Closes this activity
+        }
 
         recyclerView = findViewById(R.id.recyclerViewRepairmen)
         recyclerView.layoutManager = LinearLayoutManager(this)

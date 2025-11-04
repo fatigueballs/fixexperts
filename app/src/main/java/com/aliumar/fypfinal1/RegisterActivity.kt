@@ -25,6 +25,12 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        // ADDED: Back button listener
+        val backButton = findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener {
+            finish() // Closes this activity and goes back
+        }
+
         val registerUsername = findViewById<EditText>(R.id.registerUsername)
         val registerEmail = findViewById<EditText>(R.id.registerEmail)
         val registerPassword = findViewById<EditText>(R.id.registerPassword)
