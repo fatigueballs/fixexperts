@@ -27,7 +27,7 @@
     <string name="bottom_nav_account">Account</string>
 
     <string name="account_title">Account</string>
-    <string name="account_name">Afiq Kamar</string>
+    <string name="account_name">Username</string>
     <string name="account_location">Shah Alam, Selangor</string>
     <string name="account_rating">4.8</string>
     <string name="account_balance_label">Balance</string>
