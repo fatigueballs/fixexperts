@@ -11,11 +11,12 @@
 
 
     <TextView
+        android:id="@+id/tvWelcomeGreeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:fontFamily="@font/spartan_extrabold"
-        android:text="Welcome, Repairman!"
+        android:text="Welcome!"
         android:textColor="@color/icon_color_dark"
         android:textSize="20sp"
         android:textStyle="bold" />

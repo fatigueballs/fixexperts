@@ -10,14 +10,16 @@
     android:gravity="center">
 
     <TextView
+        android:id="@+id/tvWelcomeGreeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/spartan_extrabold"
         android:textColor="@color/icon_color_dark"
-        android:text="Welcome, username!"
+        android:text="Welcome!"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="20dp"/>
+
 
     <Button
         android:id="@+id/buttonRequestService"
