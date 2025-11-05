@@ -3,6 +3,7 @@ package com.aliumar.fypfinal1
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +24,11 @@ class RepairmanRequestsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repairman_requests)
+
+        val backButton = findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener {
+            finish() // Closes this activity and goes back
+        }
 
         recyclerViewRequests = findViewById(R.id.recyclerViewRequests)
         recyclerViewRequests.layoutManager = LinearLayoutManager(this)
