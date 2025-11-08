@@ -147,7 +147,7 @@
                 android:textColor="@color/icon_color_dark"
                 android:textSize="8sp"
                 app:cornerRadius="16dp"
-                app:icon="@drawable/ic_gas_tank"
+                app:icon="@drawable/ic_gas"
                 app:iconGravity="textTop"
                 app:iconSize="50dp"
                 app:iconTint="@color/icon_color_dark"

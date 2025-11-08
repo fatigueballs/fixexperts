@@ -190,7 +190,7 @@
                             android:layout_height="32dp"
                             android:layout_gravity="center"
                             android:contentDescription="@string/service_gas_tank"
-                            android:src="@drawable/ic_gas_tank"
+                            android:src="@drawable/ic_gas"
                             app:tint="@color/icon_color_dark" />
                     </com.google.android.material.card.MaterialCardView>
 
