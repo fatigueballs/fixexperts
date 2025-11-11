@@ -46,7 +46,7 @@
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="12dp"
                 android:fontFamily="@font/spartan_extrabold"
-                android:hint="Search"
+                android:hint="EXAMPLE"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
