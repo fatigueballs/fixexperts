@@ -31,6 +31,9 @@ class AdminViewRepairmenActivity : AppCompatActivity() {
             onApproveClick = { repairman ->
                 approveRepairman(repairman)
             },
+            onUnapproveClick = { repairman -> // ADDED
+                showUnapproveDialog(repairman)
+            },
             onChangeRatingClick = { repairman ->
                 showChangeRatingDialog(repairman)
             },
@@ -82,6 +85,31 @@ class AdminViewRepairmenActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Approval failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    // NEW FUNCTION: Shows confirmation dialog
+    private fun showUnapproveDialog(repairman: Repairman) {
+        AlertDialog.Builder(this)
+            .setTitle("Confirm Unapproval")
+            .setMessage("Are you sure you want to unapprove ${repairman.username}? This will block them from logging in.")
+            .setPositiveButton("Yes, Unapprove") { _, _ ->
+                unapproveRepairman(repairman)
+            }
+            .setNegativeButton("No, Cancel", null)
+            .show()
+    }
+
+    // NEW FUNCTION: Handles the unapproval logic
+    private fun unapproveRepairman(repairman: Repairman) {
+        if (repairman.id.isEmpty()) return
+        repairmenRef.child(repairman.id).child("isApprovedByAdmin").setValue(false)
+            .addOnSuccessListener {
+                Toast.makeText(this, "${repairman.username} has been unapproved.", Toast.LENGTH_SHORT).show()
+                // List will refresh automatically via the listener
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to unapprove: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

@@ -50,8 +50,11 @@ class RegisterActivity : AppCompatActivity() {
 
                 if (lat != null && lng != null) {
                     selectedLatLng = LatLng(lat, lng)
-                    // Update the status text
-                    textLocationStatus.text = "Location Status: Selected (Lat: ${String.format("%.4f", lat)}, Lng: ${String.format("%.4f", lng)})"
+
+                    // --- THIS IS THE MODIFIED LINE ---
+                    textLocationStatus.text = "Location Status: Selected"
+                    // --- END MODIFICATION ---
+
                     Toast.makeText(this, "Location selected successfully!", Toast.LENGTH_SHORT).show()
                 }
             } else {

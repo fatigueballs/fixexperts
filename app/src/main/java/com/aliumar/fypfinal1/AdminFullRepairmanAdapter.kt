@@ -1,6 +1,7 @@
 package com.aliumar.fypfinal1
 
 import android.content.Context
+import android.graphics.Color // Import Color for the button tint
 import android.location.Geocoder
 import android.os.Handler
 import android.os.Looper
@@ -9,13 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat // Import ContextCompat for color resource
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton // Use MaterialButton for tinting
 import java.util.Locale
 
 class AdminFullRepairmanAdapter(
     private val context: Context,
     private val repairmen: List<Repairman>,
     private val onApproveClick: (Repairman) -> Unit,
+    private val onUnapproveClick: (Repairman) -> Unit, // ADDED
     private val onChangeRatingClick: (Repairman) -> Unit,
     private val onViewHistoryClick: (Repairman) -> Unit
 ) : RecyclerView.Adapter<AdminFullRepairmanAdapter.ViewHolder>() {
@@ -25,7 +29,8 @@ class AdminFullRepairmanAdapter(
         val email: TextView = view.findViewById(R.id.textRepairmanEmail)
         val location: TextView = view.findViewById(R.id.textRepairmanLocation)
         val rating: TextView = view.findViewById(R.id.textRepairmanRating)
-        val approveBtn: Button = view.findViewById(R.id.buttonApprove)
+        // Ensure your button ID matches and is a MaterialButton in the XML for tinting
+        val approveBtn: MaterialButton = view.findViewById(R.id.buttonApprove)
         val changeRatingBtn: Button = view.findViewById(R.id.buttonChangeRating)
         val viewHistoryBtn: Button = view.findViewById(R.id.buttonViewHistory)
     }
@@ -61,19 +66,34 @@ class AdminFullRepairmanAdapter(
             }
         }.start()
 
-        // Conditional Button Visibility
+        // --- MODIFIED LOGIC FOR BUTTON ---
         if (repairman.isApprovedByAdmin) {
-            holder.approveBtn.visibility = View.GONE
+            holder.approveBtn.visibility = View.VISIBLE
+            holder.approveBtn.text = "Unapprove"
+            // Set tint to red (or another "danger" color)
+            holder.approveBtn.backgroundTintList = ContextCompat.getColorStateList(context, android.R.color.holo_red_dark)
+
             holder.changeRatingBtn.visibility = View.VISIBLE
             holder.viewHistoryBtn.visibility = View.VISIBLE
+
+            // Set listener to the UNAPPROVE action
+            holder.approveBtn.setOnClickListener { onUnapproveClick(repairman) }
+
         } else {
             holder.approveBtn.visibility = View.VISIBLE
+            holder.approveBtn.text = "Approve"
+            // Set tint back to primary blue
+            holder.approveBtn.backgroundTintList = ContextCompat.getColorStateList(context, R.color.primary_blue)
+
             holder.changeRatingBtn.visibility = View.GONE
             holder.viewHistoryBtn.visibility = View.GONE
-        }
 
-        // Click Listeners
-        holder.approveBtn.setOnClickListener { onApproveClick(repairman) }
+            // Set listener to the APPROVE action
+            holder.approveBtn.setOnClickListener { onApproveClick(repairman) }
+        }
+        // --- END MODIFIED LOGIC ---
+
+        // Click Listeners (unchanged)
         holder.changeRatingBtn.setOnClickListener { onChangeRatingClick(repairman) }
         holder.viewHistoryBtn.setOnClickListener { onViewHistoryClick(repairman) }
     }
