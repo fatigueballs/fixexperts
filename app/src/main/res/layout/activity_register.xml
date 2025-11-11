@@ -128,19 +128,13 @@
 
 
             <TextView
-                android:id="@+id/textLatLng"
+                android:id="@+id/textLocationStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/spartan_extrabold"
-                android:text="Latitude: -, Longitude: -"
+                android:text="Location Status: Not Selected"
                 android:textColor="@color/icon_color_dark" />
-
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mapView"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_marginTop="10dp" />
 
             <Button
                 android:id="@+id/buttonRegister"

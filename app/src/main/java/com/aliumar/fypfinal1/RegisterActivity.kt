@@ -1,36 +1,63 @@
 package com.aliumar.fypfinal1
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+// ADDED: Activity Result Launcher imports
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+// ADDED: LatLng import (needed for selectedLatLng)
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-// ADDED: Firebase imports for data checking
+// REMOVED: com.google.android.gms.maps.CameraUpdateFactory, GoogleMap, MapView, OnMapReadyCallback, MarkerOptions imports
+// ADDED: Firebase imports (already present, keeping for context)
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
+// MODIFIED: Removed OnMapReadyCallback interface
+class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var mapView: MapView
-    private var map: GoogleMap? = null
-    private lateinit var textLatLng: TextView
+    // REMOVED: private lateinit var mapView: MapView
+    // REMOVED: private var map: GoogleMap? = null
+    // MODIFIED: Renamed variable ID and type
+    private lateinit var textLocationStatus: TextView
     private var selectedLatLng: LatLng? = null
 
-    private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
-    // ADDED: Firebase references for duplicate check
+    // REMOVED: private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+    // ADDED: Activity Result Launcher
+    private lateinit var locationPickerLauncher: ActivityResultLauncher<Intent>
+
     private lateinit var userRef: com.google.firebase.database.DatabaseReference
     private lateinit var repairmenRef: com.google.firebase.database.DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        // ADDED: Initialize ActivityResultLauncher
+        locationPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                // Use keys defined in LocationPickerActivity.Companion
+                val lat = data?.getDoubleExtra(LocationPickerActivity.EXTRA_LATITUDE, 0.0)
+                val lng = data?.getDoubleExtra(LocationPickerActivity.EXTRA_LONGITUDE, 0.0)
+
+                if (lat != null && lng != null) {
+                    selectedLatLng = LatLng(lat, lng)
+                    // Update the status text
+                    textLocationStatus.text = "Location Status: Selected (Lat: ${String.format("%.4f", lat)}, Lng: ${String.format("%.4f", lng)})"
+                    Toast.makeText(this, "Location selected successfully!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Location selection cancelled.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         // ADDED: Back button listener
         val backButton = findViewById<ImageButton>(R.id.backButton)
@@ -44,24 +71,28 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
         val repairmanCheck = findViewById<CheckBox>(R.id.repairmanTrue)
         val registerButton = findViewById<Button>(R.id.buttonRegister)
         val pickLocationButton = findViewById<Button>(R.id.buttonPickLocation)
-        textLatLng = findViewById(R.id.textLatLng)
-        mapView = findViewById(R.id.mapView)
+        // MODIFIED: Reference new TextView ID
+        textLocationStatus = findViewById(R.id.textLocationStatus)
+        // REMOVED: mapView initialization
 
         // Initialize Firebase DB references
         val database = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/")
         userRef = database.getReference("users")
         repairmenRef = database.getReference("repairmen")
 
-        // Initialize MapView
-        var mapViewBundle: Bundle? = null
-        if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY)
-        }
-        mapView.onCreate(mapViewBundle)
-        mapView.getMapAsync(this)
+        // REMOVED: MapView lifecycle setup
+        // REMOVED: mapView.onCreate(mapViewBundle)
+        // REMOVED: mapView.getMapAsync(this)
 
+        // MODIFIED: pickLocationButton launches the new activity
         pickLocationButton.setOnClickListener {
-            Toast.makeText(this, "Tap on the map to pick your location", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, LocationPickerActivity::class.java)
+            // Optionally pass current location if known/previously picked
+            selectedLatLng?.let {
+                intent.putExtra(LocationPickerActivity.EXTRA_LATITUDE, it.latitude)
+                intent.putExtra(LocationPickerActivity.EXTRA_LONGITUDE, it.longitude)
+            }
+            locationPickerLauncher.launch(intent)
         }
 
         registerButton.setOnClickListener {
@@ -75,15 +106,22 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
                 return@setOnClickListener
             }
 
+            // NEW VALIDATION: Check if a location has been picked
+            if (selectedLatLng == null) {
+                Toast.makeText(this, "Please pick your location on the map first.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val lat = selectedLatLng?.latitude ?: 0.0
             val lng = selectedLatLng?.longitude ?: 0.0
 
-            // NEW: Start the duplicate check process
+            // Proceed with registration
             checkDuplicateCredentials(username, email, password, isRepairman, lat, lng)
         }
     }
 
-    // NEW: Function to check for duplicate credentials in both user and repairman nodes
+    // Existing functions (checkDuplicateCredentials, checkRepairmenForDuplicate, registerNewAccount) remain the same.
+    // ... [checkDuplicateCredentials function body]
     private fun checkDuplicateCredentials(username: String, email: String, password: String, isRepairman: Boolean, lat: Double, lng: Double) {
         // 1. Check existing users
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -201,36 +239,5 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
-        val defaultLocation = LatLng(3.139, 101.6869) // Kuala Lumpur
-        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10f))
-
-        // Tap map to set location
-        map?.setOnMapClickListener { latLng ->
-            map?.clear()
-            map?.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
-            selectedLatLng = latLng
-            textLatLng.text = "Latitude: ${latLng.latitude}, Longitude: ${latLng.longitude}"
-        }
-    }
-
-    // Lifecycle for MapView
-    override fun onResume() { super.onResume(); mapView.onResume() }
-    override fun onStart() { super.onStart(); mapView.onStart() }
-    override fun onStop() { super.onStop(); mapView.onStop() }
-    override fun onPause() { mapView.onPause(); super.onPause() }
-    override fun onDestroy() { mapView.onDestroy(); super.onDestroy() }
-    override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        var mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY)
-        if (mapViewBundle == null) {
-            mapViewBundle = Bundle()
-            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
-        }
-        mapView.onSaveInstanceState(mapViewBundle)
-    }
+    // REMOVED: All MapView lifecycle and OnMapReadyCallback methods.
 }
