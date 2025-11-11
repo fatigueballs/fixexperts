@@ -42,6 +42,14 @@
             android:text="Status: Pending"
             android:layout_marginTop="4dp" />
 
+        <Button
+            android:id="@+id/buttonViewDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/spartan_extrabold"
+            android:text="View Details"
+            android:backgroundTint="@color/primary_blue"
+            android:layout_marginTop="8dp" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

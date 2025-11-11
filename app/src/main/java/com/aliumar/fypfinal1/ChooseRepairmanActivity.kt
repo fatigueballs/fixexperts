@@ -5,14 +5,18 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton // <-- IMPORT THIS
+// ADDED: Import AlertDialog and LayoutInflater
+import android.view.LayoutInflater
+import androidx.appcompat.app.AlertDialog
+// END ADDED
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import java.util.Calendar
 
@@ -27,19 +31,19 @@ class ChooseRepairmanActivity : AppCompatActivity() {
     private var selectedService: String = ""
     private val TAG = "ChooseRepairmanActivity"
 
-    // NEW: Variable to hold the user's details obtained via Shared Preferences and DB lookup
+    // REMOVED: private lateinit var editProblemDescription: EditText
+
     private var loggedInUserEmail: String? = null
-    private var actualUserId: String? = null // This will be the Firebase DB key (UID substitute)
+    private var actualUserId: String? = null
     private var actualUserName: String = "Unknown User"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_repairman)
 
-        // ADDED: Back button listener
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener {
-            finish() // Closes this activity
+            finish()
         }
 
         recyclerView = findViewById(R.id.recyclerViewRepairmen)
@@ -48,16 +52,16 @@ class ChooseRepairmanActivity : AppCompatActivity() {
         selectedService = intent.getStringExtra("SERVICE_TYPE") ?: ""
         findViewById<TextView>(R.id.textSelectedService).text = "$selectedService"
 
+        // REMOVED: editProblemDescription initialization
+
         Log.d(TAG, "$selectedService")
 
         dbRef = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("repairmen")
         auth = FirebaseAuth.getInstance()
 
-        // FIX 1: Retrieve logged-in user's email from shared preferences
         val sharedPref = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
         loggedInUserEmail = sharedPref.getString("email", null)
 
-        // FIX 2: Look up the user's actual Firebase key (UID) using their email
         if (loggedInUserEmail != null) {
             fetchUserKeyByEmail(loggedInUserEmail!!)
         } else {
@@ -65,9 +69,7 @@ class ChooseRepairmanActivity : AppCompatActivity() {
         }
 
         repairmenList = mutableListOf()
-        // MODIFIED: Pass 'this' (Context) to the RepairmanAdapter
         adapter = RepairmanAdapter(this, repairmenList) { repairman ->
-            // Calling the new authentication check that relies on custom login state
             checkCustomAuthAndShowDateTimePicker(repairman)
         }
 
@@ -75,22 +77,16 @@ class ChooseRepairmanActivity : AppCompatActivity() {
         loadRepairmen()
     }
 
-    /**
-     * Looks up the user's actual Firebase key (which serves as the UID substitute)
-     * using the email stored in Shared Preferences.
-     */
     private fun fetchUserKeyByEmail(email: String) {
         val userRef = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users")
 
-        // Note: This relies on your 'users' node using the 'username' as the key.
-        // We iterate through all users to find a match by email.
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var found = false
                 for (userSnap in snapshot.children) {
                     val user = userSnap.getValue(User::class.java)
                     if (user != null && user.email.equals(email, ignoreCase = true)) {
-                        actualUserId = userSnap.key // Get the Firebase key (username)
+                        actualUserId = userSnap.key
                         actualUserName = user.username
                         Log.d(TAG, "Custom User Key found: $actualUserId")
                         found = true
@@ -98,7 +94,6 @@ class ChooseRepairmanActivity : AppCompatActivity() {
                     }
                 }
                 if (!found) {
-                    // This could happen if a repairman logs in but tries to access the user request flow
                     Toast.makeText(this@ChooseRepairmanActivity, "Error: User data not found.", Toast.LENGTH_LONG).show()
                 }
             }
@@ -110,26 +105,53 @@ class ChooseRepairmanActivity : AppCompatActivity() {
     }
 
     /**
-     * Checks custom authentication state (if we have a User ID from DB)
+     * Checks custom authentication state and initiates the description input process.
      */
     private fun checkCustomAuthAndShowDateTimePicker(repairman: Repairman) {
         val userId = actualUserId
 
         if (userId != null) {
-            // User is authenticated via your custom system, proceed immediately.
-            showDateTimePicker(repairman, userId, actualUserName)
+            // User is authenticated, proceed to get description via dialog
+            showDescriptionInputDialog(repairman, userId, actualUserName)
         } else {
-            // The lookup failed, or user is not logged in.
             Log.e(TAG, "Custom Auth failed. User ID is null.")
             Toast.makeText(this, "Please log in to send a request.", Toast.LENGTH_SHORT).show()
         }
     }
 
+    // NEW: Function to display dialog for problem description input
+    private fun showDescriptionInputDialog(repairman: Repairman, userId: String, userName: String) {
+        // Dynamically create a multi-line EditText
+        val descriptionInput = EditText(this).apply {
+            hint = "Describe your problem here..."
+            maxLines = 5
+            minLines = 3
+            setPadding(30, 30, 30, 30) // Add padding
+            // Reuse existing background defined in XML
+            setBackgroundResource(R.drawable.input_field_background)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Describe Your Problem for ${repairman.username}")
+            .setView(descriptionInput)
+            .setPositiveButton("Next: Pick Date/Time") { dialog, _ ->
+                val problemDescription = descriptionInput.text.toString().trim()
+                if (problemDescription.isEmpty()) {
+                    Toast.makeText(this, "Problem description is required.", Toast.LENGTH_LONG).show()
+                } else {
+                    // Proceed to Date/Time Picker, passing the collected description
+                    showDateTimePicker(repairman, userId, userName, problemDescription)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+
     /**
      * Shows a Date Picker followed by a Time Picker to schedule the service.
-     * NOTE: This now requires the resolved custom userId and userName.
      */
-    private fun showDateTimePicker(repairman: Repairman, userId: String, userName: String) {
+    private fun showDateTimePicker(repairman: Repairman, userId: String, userName: String, problemDescription: String) {
         val calendar = Calendar.getInstance()
 
         // 1. Date Picker Dialog
@@ -144,10 +166,9 @@ class ChooseRepairmanActivity : AppCompatActivity() {
                 calendar.set(Calendar.MINUTE, minute)
 
                 val selectedMillis = calendar.timeInMillis
-                // Proceed to send the request with the scheduled time
-                sendServiceRequest(repairman, selectedMillis, userId, userName)
+                sendServiceRequest(repairman, selectedMillis, userId, userName, problemDescription)
 
-            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show() // 'true' for 24-hour format
+            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
 
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
@@ -155,7 +176,7 @@ class ChooseRepairmanActivity : AppCompatActivity() {
     /**
      * Sends the service request to Firebase after date/time selection.
      */
-    private fun sendServiceRequest(repairman: Repairman, dateMillis: Long, userId: String, userName: String) {
+    private fun sendServiceRequest(repairman: Repairman, dateMillis: Long, userId: String, userName: String, problemDescription: String) {
         if (repairman.id.isEmpty()) {
             Toast.makeText(this, "Error: Repairman ID is missing. Cannot send request.", Toast.LENGTH_SHORT).show()
             return
@@ -174,13 +195,14 @@ class ChooseRepairmanActivity : AppCompatActivity() {
             id = requestKey,
             userId = userId,
             userName = userName,
-            repairmanId = repairman.id, // Use the Repairman's Firebase Key (username in your scheme)
+            repairmanId = repairman.id,
             repairmanName = repairman.username,
             serviceType = selectedService,
             date = "",
             dateMillis = dateMillis,
             status = "Pending",
-            timestamp = System.currentTimeMillis()
+            timestamp = System.currentTimeMillis(),
+            problemDescription = problemDescription
         )
 
         // Save the request to Firebase
@@ -209,10 +231,8 @@ class ChooseRepairmanActivity : AppCompatActivity() {
                 for (rSnap in snapshot.children) {
                     val r = rSnap.getValue(Repairman::class.java)
                     if (r != null) {
-                        // Ensure the Firebase key is saved as the Repairman's ID
                         r.id = rSnap.key ?: ""
 
-                        // Use a case-insensitive, fuzzy match check for the specialty
                         val specialtyMatches = r.specialties.any { specialty ->
                             specialty.trim().equals(targetService, ignoreCase = true)
                         }
@@ -240,7 +260,6 @@ class ChooseRepairmanActivity : AppCompatActivity() {
         })
     }
 
-    // The unused Firebase Auth logic has been removed/commented out to rely fully on the custom system
     override fun onDestroy() {
         super.onDestroy()
     }

@@ -10,7 +10,11 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+// ADDED: Firebase imports for data checking
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -20,6 +24,9 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
     private var selectedLatLng: LatLng? = null
 
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+    // ADDED: Firebase references for duplicate check
+    private lateinit var userRef: com.google.firebase.database.DatabaseReference
+    private lateinit var repairmenRef: com.google.firebase.database.DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +47,11 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
         textLatLng = findViewById(R.id.textLatLng)
         mapView = findViewById(R.id.mapView)
 
+        // Initialize Firebase DB references
+        val database = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        userRef = database.getReference("users")
+        repairmenRef = database.getReference("repairmen")
+
         // Initialize MapView
         var mapViewBundle: Bundle? = null
         if (savedInstanceState != null) {
@@ -47,10 +59,6 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
-
-        val database = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/")
-        val userRef = database.getReference("users")
-        val repairmenRef = database.getReference("repairmen")
 
         pickLocationButton.setOnClickListener {
             Toast.makeText(this, "Tap on the map to pick your location", Toast.LENGTH_SHORT).show()
@@ -70,53 +78,129 @@ class RegisterActivity : AppCompatActivity(), OnMapReadyCallback {
             val lat = selectedLatLng?.latitude ?: 0.0
             val lng = selectedLatLng?.longitude ?: 0.0
 
-            if (isRepairman) {
-                // MODIFIED: Initializing new fields
-                val repairman = Repairman(
-                    username = username,
-                    email = email,
-                    password = password,
-                    latitude = lat,
-                    longitude = lng,
-                    rating = 0.0,
-                    storeName = "",
-                    specialties = listOf(), // Empty initially
-                    serviceDescription = "", // Empty initially
-                    isSetupComplete = false // Must complete setup later
-                )
-
-                repairmenRef.child(username).setValue(repairman)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Repairman registered! Please login to complete your profile setup.", Toast.LENGTH_LONG).show()
-                        startActivity(Intent(this, LoginActivity::class.java))
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
-                    }
-
-            } else {
-                val user = User(
-                    username = username,
-                    email = email,
-                    password = password,
-                    latitude = lat,
-                    longitude = lng,
-                    rating = 0.0
-                )
-
-                userRef.child(username).setValue(user)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "User registered!", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, LoginActivity::class.java))
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
-                    }
-            }
+            // NEW: Start the duplicate check process
+            checkDuplicateCredentials(username, email, password, isRepairman, lat, lng)
         }
     }
+
+    // NEW: Function to check for duplicate credentials in both user and repairman nodes
+    private fun checkDuplicateCredentials(username: String, email: String, password: String, isRepairman: Boolean, lat: Double, lng: Double) {
+        // 1. Check existing users
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var duplicateFound = false
+                for (userSnap in snapshot.children) {
+                    val existingUsername = userSnap.child("username").value?.toString()
+                    val existingEmail = userSnap.child("email").value?.toString()
+
+                    if (username.equals(existingUsername, ignoreCase = true)) {
+                        Toast.makeText(this@RegisterActivity, "Error: Username '$username' is already taken.", Toast.LENGTH_LONG).show()
+                        duplicateFound = true
+                        break
+                    }
+                    if (email.equals(existingEmail, ignoreCase = true)) {
+                        Toast.makeText(this@RegisterActivity, "Error: Email '$email' is already in use.", Toast.LENGTH_LONG).show()
+                        duplicateFound = true
+                        break
+                    }
+                }
+
+                if (duplicateFound) {
+                    return // Stop registration if found in users node
+                } else {
+                    // 2. If no duplicate in users, check existing repairmen
+                    checkRepairmenForDuplicate(username, email, password, isRepairman, lat, lng)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@RegisterActivity, "Database error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // NEW: Step 2 of the duplicate check
+    private fun checkRepairmenForDuplicate(username: String, email: String, password: String, isRepairman: Boolean, lat: Double, lng: Double) {
+        repairmenRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var duplicateFound = false
+                for (rmSnap in snapshot.children) {
+                    val existingUsername = rmSnap.child("username").value?.toString()
+                    val existingEmail = rmSnap.child("email").value?.toString()
+
+                    if (username.equals(existingUsername, ignoreCase = true)) {
+                        Toast.makeText(this@RegisterActivity, "Error: Username '$username' is already taken.", Toast.LENGTH_LONG).show()
+                        duplicateFound = true
+                        break
+                    }
+                    if (email.equals(existingEmail, ignoreCase = true)) {
+                        Toast.makeText(this@RegisterActivity, "Error: Email '$email' is already in use.", Toast.LENGTH_LONG).show()
+                        duplicateFound = true
+                        break
+                    }
+                }
+
+                if (!duplicateFound) {
+                    // 3. If no duplicate found anywhere, proceed with registration
+                    registerNewAccount(username, email, password, isRepairman, lat, lng)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@RegisterActivity, "Database error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // NEW: Function containing the original registration logic
+    private fun registerNewAccount(username: String, email: String, password: String, isRepairman: Boolean, lat: Double, lng: Double) {
+        if (isRepairman) {
+            // MODIFIED: Initializing new fields
+            val repairman = Repairman(
+                username = username,
+                email = email,
+                password = password,
+                latitude = lat,
+                longitude = lng,
+                rating = 0.0,
+                storeName = "",
+                specialties = listOf(), // Empty initially
+                serviceDescription = "", // Empty initially
+                isSetupComplete = false // Must complete setup later
+            )
+
+            repairmenRef.child(username).setValue(repairman)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Repairman registered! Please login to complete your profile setup.", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+
+        } else {
+            val user = User(
+                username = username,
+                email = email,
+                password = password,
+                latitude = lat,
+                longitude = lng,
+                rating = 0.0
+            )
+
+            userRef.child(username).setValue(user)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "User registered!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap

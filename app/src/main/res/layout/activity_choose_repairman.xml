@@ -47,8 +47,16 @@
             android:textSize="18sp"
             android:layout_marginBottom="12dp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Available Repairmen"
+            android:textColor="@color/icon_color_dark"
+            android:fontFamily="@font/spartan_extrabold"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="20dp"
             android:id="@+id/recyclerViewRepairmen"
             android:layout_width="match_parent"
             android:layout_height="0dp"
