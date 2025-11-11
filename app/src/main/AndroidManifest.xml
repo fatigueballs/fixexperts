@@ -20,7 +20,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -28,7 +27,7 @@
         <activity android:name=".RegisterActivity"></activity>
         <activity android:name=".HomeActivity_User"></activity>
         <activity android:name=".HomeActivity_RM"></activity>
-        <activity android:name=".RepairmanSetupActivity"></activity> <!-- NEW ACTIVITY REGISTERED -->
+        <activity android:name=".RepairmanSetupActivity"></activity>
         <activity android:name=".UserServiceSelectionActivity"></activity>
         <activity android:name=".ChooseRepairmanActivity"></activity>
         <activity android:name=".UserDashboardActivity"></activity>
@@ -39,12 +38,14 @@
         <activity android:name=".LocationPickerActivity"></activity>
         <activity android:name=".AdminActivity"></activity>
 
+        <activity android:name=".AdminViewRepairmenActivity"></activity>
+        <activity android:name=".AdminViewUsersActivity"></activity>
+        <activity android:name=".AdminViewRequestsActivity"></activity>
+        <activity android:name=".AdminRequestHistoryActivity"></activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCuISskEU55WQ6s0sj_45YST5Xr26NrK38"/>
 
     </application>
-
-
 
 </manifest>

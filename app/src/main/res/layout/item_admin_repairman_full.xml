@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/textRepairmanName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/spartan_extrabold"
+            android:text="Name: [Name]"
+            android:textColor="@color/icon_color_dark"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textRepairmanEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/spartan_extrabold"
+            android:text="Email: [Email]"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textRepairmanLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/spartan_extrabold"
+            android:text="Location: [Location]"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textRepairmanRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/spartan_extrabold"
+            android:text="Rating: [Rating]"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <Button
+                android:id="@+id/buttonApprove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Approve"
+                android:fontFamily="@font/spartan_extrabold"
+                android:backgroundTint="@color/primary_blue"
+                android:visibility="gone"
+                app:cornerRadius="8dp"/>
+
+            <Button
+                android:id="@+id/buttonChangeRating"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Set Rating"
+                android:fontFamily="@font/spartan_extrabold"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:cornerRadius="8dp"/>
+
+            <Button
+                android:id="@+id/buttonViewHistory"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="View History"
+                android:fontFamily="@font/spartan_extrabold"
+                android:visibility="gone"
+                app:cornerRadius="8dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

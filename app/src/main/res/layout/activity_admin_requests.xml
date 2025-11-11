@@ -38,65 +38,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintTop_toBottomOf="@id/tvAdminTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAdminTitle">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.2">
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btnViewRepairmen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:text="View Repairmen"
+            android:fontFamily="@font/spartan_extrabold"
+            android:backgroundTint="@color/primary_blue"
+            android:paddingVertical="12dp"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="12dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/spartan_extrabold"
-                android:text="Unapproved Repairmen"
-                android:textColor="@color/primary_blue"
-                android:textSize="18sp" />
+        <Button
+            android:id="@+id/btnViewUsers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Users"
+            android:fontFamily="@font/spartan_extrabold"
+            android:backgroundTint="@color/primary_blue"
+            android:paddingVertical="12dp"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="12dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewUnapprovedRepairmen"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                tools:itemCount="2"
-                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_admin_repairman" />
+        <Button
+            android:id="@+id/btnViewRequests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View All Requests"
+            android:fontFamily="@font/spartan_extrabold"
+            android:backgroundTint="@color/primary_blue"
+            android:paddingVertical="12dp"
+            app:cornerRadius="12dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:background="#B3B3B3" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/spartan_extrabold"
-                android:text="All Service Requests"
-                android:textColor="@color/primary_blue"
-                android:textSize="18sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewAllRequests"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                tools:itemCount="5"
-                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_admin_request" />
-
-        </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
