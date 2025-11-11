@@ -28,6 +28,8 @@ data class Repairman(
     var ratingCount: Int = 0,
     // NEW: Flag to force setup completion after registration
     var isSetupComplete: Boolean = false,
+    // NEW: Admin approval flag
+    var isApprovedByAdmin: Boolean = false, // <--- MANDATORY FIELD FOR ADMIN APPROVAL
     // The adapter now calculates the city dynamically
     val city: String = ""
 )

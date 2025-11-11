@@ -59,9 +59,22 @@ class LoginActivity : AppCompatActivity() {
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             } else {
-                loginUser(email, password)
+                checkAdminLogin(email, password)
             }
         }
+    }
+
+    private fun checkAdminLogin(email: String, password: String) {
+        // Hardcoded Admin Credentials
+        if (email == "admin@fixexperts.com" && password == "admin123") {
+            saveLoginInfo(email, "admin")
+            Toast.makeText(this, "Admin Login Successful!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, AdminActivity::class.java)) // NEW ADMIN ACTIVITY
+            finish()
+            return
+        }
+        // If not admin, proceed to check regular users
+        loginUser(email, password)
     }
 
     private fun loginUser(email: String, password: String) {
@@ -94,13 +107,20 @@ class LoginActivity : AppCompatActivity() {
             for (repairmanSnapshot in snapshot.children) {
                 val repairEmail = repairmanSnapshot.child("email").value?.toString()
                 val repairPassword = repairmanSnapshot.child("password").value?.toString()
+                // NEW: Read the approval status
+                val isApproved = repairmanSnapshot.child("isApprovedByAdmin").value as? Boolean ?: false
 
                 if (email == repairEmail && password == repairPassword) {
                     found = true
-                    saveLoginInfo(email, "repairman")
-                    Toast.makeText(this, "Repairman Login Successful!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, HomeActivity_RM::class.java))
-                    finish()
+                    if (isApproved) { // <--- CORE CHECK: ONLY ALLOW LOGIN IF APPROVED
+                        saveLoginInfo(email, "repairman")
+                        Toast.makeText(this, "Repairman Login Successful!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, HomeActivity_RM::class.java))
+                        finish()
+                    } else {
+                        // <--- BLOCK LOGIN AND INFORM USER
+                        Toast.makeText(this, "Account not yet verified by Admin. Please wait for approval.", Toast.LENGTH_LONG).show()
+                    }
                     break
                 }
             }
@@ -130,6 +150,7 @@ class LoginActivity : AppCompatActivity() {
             when (userType) {
                 "user" -> startActivity(Intent(this, HomeActivity_User::class.java))
                 "repairman" -> startActivity(Intent(this, HomeActivity_RM::class.java))
+                "admin" -> startActivity(Intent(this, AdminActivity::class.java))
             }
             finish()
         }

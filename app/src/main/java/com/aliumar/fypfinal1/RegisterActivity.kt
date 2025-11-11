@@ -204,12 +204,13 @@ class RegisterActivity : AppCompatActivity() {
                 storeName = "",
                 specialties = listOf(), // Empty initially
                 serviceDescription = "", // Empty initially
-                isSetupComplete = false // Must complete setup later
+                isSetupComplete = false, // Must complete setup later
+                isApprovedByAdmin = false // <--- SET TO FALSE ON REGISTRATION
             )
 
             repairmenRef.child(username).setValue(repairman)
                 .addOnSuccessListener {
-                    Toast.makeText(this, "Repairman registered! Please login to complete your profile setup.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Repairman registered! Your account requires admin approval before login.", Toast.LENGTH_LONG).show()
                     startActivity(Intent(this, LoginActivity::class.java))
                     finish()
                 }
