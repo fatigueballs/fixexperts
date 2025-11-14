@@ -1,5 +1,7 @@
 package com.aliumar.fypfinal1
 
+import com.google.firebase.database.PropertyName
+
 data class User(
     val username: String = "",
     val email: String = "",
@@ -29,7 +31,10 @@ data class Repairman(
     // NEW: Flag to force setup completion after registration
     var isSetupComplete: Boolean = false,
     // NEW: Admin approval flag
-    var isApprovedByAdmin: Boolean = false, // <--- MANDATORY FIELD FOR ADMIN APPROVAL
+    @get:PropertyName("isApprovedByAdmin")
+    @set:PropertyName("isApprovedByAdmin")
+    var isApprovedByAdmin: Boolean = false,
+     // <--- MANDATORY FIELD FOR ADMIN APPROVAL
     // The adapter now calculates the city dynamically
     val city: String = ""
 )
