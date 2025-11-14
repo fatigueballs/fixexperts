@@ -15,7 +15,8 @@ import java.util.Locale
 class AdminUserAdapter(
     private val context: Context,
     private val users: List<User>,
-    private val onViewHistoryClick: (User, String) -> Unit // Passes user and their ID
+    private val onViewHistoryClick: (User, String) -> Unit, // Passes user and their ID (username)
+    private val onDeleteClick: (User, String) -> Unit // NEW: Delete click listener
 ) : RecyclerView.Adapter<AdminUserAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -23,6 +24,7 @@ class AdminUserAdapter(
         val email: TextView = view.findViewById(R.id.textUserEmail)
         val location: TextView = view.findViewById(R.id.textUserLocation)
         val viewHistoryBtn: Button = view.findViewById(R.id.buttonViewHistory)
+        val deleteBtn: Button = view.findViewById(R.id.buttonDeleteUser) // NEW: Find delete button
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,7 +36,6 @@ class AdminUserAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = users[position]
-        // We need the key, which isn't in the User object. We'll handle this in the Activity.
         holder.name.text = user.username
         holder.email.text = "Email: ${user.email}"
 
@@ -49,11 +50,16 @@ class AdminUserAdapter(
         }.start()
 
         holder.viewHistoryBtn.setOnClickListener {
-            // The key (ID) will be passed from the activity's map
-            onViewHistoryClick(user, user.username) // Assuming username is the key
+            onViewHistoryClick(user, user.username)
+        }
+
+        // NEW: Set delete listener
+        holder.deleteBtn.setOnClickListener {
+            onDeleteClick(user, user.username)
         }
     }
 
+    // ... (Existing getCityFromCoordinates function) ...
     private fun getCityFromCoordinates(lat: Double, lng: Double): String {
         if (lat == 0.0 && lng == 0.0) return "Location Not Set"
         val geocoder = Geocoder(context, Locale.getDefault())

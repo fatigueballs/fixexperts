@@ -19,9 +19,10 @@ class AdminFullRepairmanAdapter(
     private val context: Context,
     private val repairmen: List<Repairman>,
     private val onApproveClick: (Repairman) -> Unit,
-    private val onUnapproveClick: (Repairman) -> Unit, // ADDED
+    private val onUnapproveClick: (Repairman) -> Unit,
     private val onChangeRatingClick: (Repairman) -> Unit,
-    private val onViewHistoryClick: (Repairman) -> Unit
+    private val onViewHistoryClick: (Repairman) -> Unit,
+    private val onDeleteClick: (Repairman) -> Unit // NEW: Delete click listener
 ) : RecyclerView.Adapter<AdminFullRepairmanAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -29,10 +30,10 @@ class AdminFullRepairmanAdapter(
         val email: TextView = view.findViewById(R.id.textRepairmanEmail)
         val location: TextView = view.findViewById(R.id.textRepairmanLocation)
         val rating: TextView = view.findViewById(R.id.textRepairmanRating)
-        // Ensure your button ID matches and is a MaterialButton in the XML for tinting
         val approveBtn: MaterialButton = view.findViewById(R.id.buttonApprove)
         val changeRatingBtn: Button = view.findViewById(R.id.buttonChangeRating)
         val viewHistoryBtn: Button = view.findViewById(R.id.buttonViewHistory)
+        val deleteBtn: Button = view.findViewById(R.id.buttonDelete) // NEW: Find delete button
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,7 +48,7 @@ class AdminFullRepairmanAdapter(
         holder.name.text = repairman.username
         holder.email.text = "Email: ${repairman.email}"
 
-        // Format Rating
+        // ... (Existing rating and geocoding logic) ...
         val ratingText = if (repairman.ratingCount > 0) {
             String.format("Rating: %.1f (%d reviews)", repairman.avgRating, repairman.ratingCount)
         } else {
@@ -55,7 +56,6 @@ class AdminFullRepairmanAdapter(
         }
         holder.rating.text = ratingText
 
-        // Geocoding for location
         holder.location.text = "Location: Loading..."
         Thread {
             val city = getCityFromCoordinates(repairman.latitude, repairman.longitude)
@@ -70,34 +70,33 @@ class AdminFullRepairmanAdapter(
         if (repairman.isApprovedByAdmin) {
             holder.approveBtn.visibility = View.VISIBLE
             holder.approveBtn.text = "Unapprove"
-            // Set tint to red (or another "danger" color)
             holder.approveBtn.backgroundTintList = ContextCompat.getColorStateList(context, android.R.color.holo_red_dark)
 
             holder.changeRatingBtn.visibility = View.VISIBLE
             holder.viewHistoryBtn.visibility = View.VISIBLE
 
-            // Set listener to the UNAPPROVE action
             holder.approveBtn.setOnClickListener { onUnapproveClick(repairman) }
 
         } else {
             holder.approveBtn.visibility = View.VISIBLE
             holder.approveBtn.text = "Approve"
-            // Set tint back to primary blue
             holder.approveBtn.backgroundTintList = ContextCompat.getColorStateList(context, R.color.primary_blue)
 
             holder.changeRatingBtn.visibility = View.GONE
             holder.viewHistoryBtn.visibility = View.GONE
 
-            // Set listener to the APPROVE action
             holder.approveBtn.setOnClickListener { onApproveClick(repairman) }
         }
+
         // --- END MODIFIED LOGIC ---
 
-        // Click Listeners (unchanged)
+        // Click Listeners
         holder.changeRatingBtn.setOnClickListener { onChangeRatingClick(repairman) }
         holder.viewHistoryBtn.setOnClickListener { onViewHistoryClick(repairman) }
+        holder.deleteBtn.setOnClickListener { onDeleteClick(repairman) } // NEW: Set delete listener
     }
 
+    // ... (Existing getCityFromCoordinates function) ...
     private fun getCityFromCoordinates(lat: Double, lng: Double): String {
         if (lat == 0.0 && lng == 0.0) return "Location Not Set"
         val geocoder = Geocoder(context, Locale.getDefault())

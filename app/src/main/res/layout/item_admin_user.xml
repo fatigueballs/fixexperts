@@ -50,5 +50,15 @@
             android:fontFamily="@font/spartan_extrabold"
             android:layout_marginTop="12dp"
             app:cornerRadius="8dp"/>
+
+        <Button
+            android:id="@+id/buttonDeleteUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Account"
+            android:fontFamily="@font/spartan_extrabold"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:layout_marginTop="8dp"
+            app:cornerRadius="8dp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
