@@ -29,13 +29,12 @@ jobs:
       - name: Start AVD (Emulator)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30 # You can adjust this API level (e.g., 29, 31, 33)
+          api-level: 33 # You can adjust this API level (e.g., 29, 31, 33)
           target: default
           arch: x86_64
           profile: Nexus 5
           disable-animations: true
+          disable-window-animation: true
           # The script will run the test command after the emulator starts
           script: ./gradlew connectedDebugAndroidTest
       # ----------------------------------------------------
-
-      # ⬆️ REMOVE the old "Run UI Instrumentation (Espresso) Tests" step entirely ⬆️
