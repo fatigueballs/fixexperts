@@ -2,13 +2,14 @@ name: Android CI (Espresso Tests)
 
 on:
   push:
-    branches: [ master, develop ] # Trigger on push to main or develop branch
+    branches: [ master, develop ]
   pull_request:
-    branches: [ master ] # Trigger when a Pull Request targets main
+    branches: [ master ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -24,17 +25,22 @@ jobs:
         run: chmod +x gradlew
 
       # ----------------------------------------------------
-      #  NEW: STEP TO START THE ANDROID EMULATOR 
+      #  FIXED EMULATOR CONFIG (ARM + HEADLESS + STABLE)
       # ----------------------------------------------------
-      - name: Start AVD (Emulator)
+      - name: Start AVD and Run Espresso Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 33 # You can adjust this API level (e.g., 29, 31, 33)
+          api-level: 33
           target: default
-          arch: x86_64
-          profile: Nexus 5
+          arch: arm64-v8a        # IMPORTANT: Works without hardware acceleration
+          profile: pixel_6       # A stable profile for ARM
           disable-animations: true
-          disable-window-animation: true
-          # The script will run the test command after the emulator starts
+          emulator-options: |
+            -no-window
+            -no-audio
+            -no-boot-anim
+            -no-snapshot
+            -camera-back none
+            -camera-front none
+            -gpu swiftshader_indirect
           script: ./gradlew connectedDebugAndroidTest
-      # ----------------------------------------------------
