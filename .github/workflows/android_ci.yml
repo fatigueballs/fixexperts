@@ -24,7 +24,7 @@ jobs:
         run: chmod +x gradlew
 
       # ----------------------------------------------------
-      # ⬇️ NEW: STEP TO START THE ANDROID EMULATOR ⬇️
+      #  NEW: STEP TO START THE ANDROID EMULATOR 
       # ----------------------------------------------------
       - name: Start AVD (Emulator)
         uses: reactivecircus/android-emulator-runner@v2
@@ -33,7 +33,6 @@ jobs:
           target: default
           arch: x86_64
           profile: Nexus 5
-          emulator-build: 31c
           disable-animations: true
           # The script will run the test command after the emulator starts
           script: ./gradlew connectedDebugAndroidTest
