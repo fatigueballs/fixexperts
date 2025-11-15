@@ -4,7 +4,6 @@ import androidx.test.espresso.Espresso.onView //view
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed // display match
-import androidx.test.espresso.matcher.ViewMatchers.withText // text match
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -18,7 +17,7 @@ import org.junit.Rule
  * Instrumented test, which will execute on an Android device.
  *
  * See [testing documentation](http://d.android.com/tools/testing).
-
+ */
 @RunWith(AndroidJUnit4::class)
 
 // test scope
@@ -26,7 +25,7 @@ class SuccessTest {
 
     @get: Rule // which activity to use
     var activityRule: ActivityScenarioRule<LoginActivity>
-    = ActivityScenarioRule(LoginActivity::class.java)
+            = ActivityScenarioRule(LoginActivity::class.java)
 
 
     @Test // test step, for this specific test case
@@ -83,45 +82,3 @@ class SuccessTest {
             .check(matches(isDisplayed()))
     }
 }
-
-
-@RunWith(AndroidJUnit4::class)
-class UnsuccessfulTest {
-
-    @get:Rule
-    var activityRule: ActivityScenarioRule<LoginActivity> =
-        ActivityScenarioRule(LoginActivity::class.java)
-
-
-    @Test
-    fun testEmptyField() {
-
-        // --- Test Case: TC_LOG_004 (Unsuccessful Login Empty field) ---
-
-        onView(withId(R.id.buttonLogin))
-            .perform(click())
-
-        onView(withId(R.id.tvTitle))
-            .check(matches(isDisplayed()))
-
-    }
-
-    @Test
-    fun testInvalidLogin() {
-
-        // --- Test Case: TC_LOG_005 (Unsuccessful Login, Invalid password/ username) ---
-
-        onView(withId(R.id.loginEmail))
-            .perform(typeText("InvalidUsername"), closeSoftKeyboard())
-
-        onView(withId(R.id.loginPassword))
-            .perform(typeText("InvalidPassword"), closeSoftKeyboard())
-
-        onView(withId(R.id.buttonLogin))
-            .perform(click())
-
-        onView(withId(R.id.tvTitle))
-            .check(matches(isDisplayed()))
-    }
-}
- */
