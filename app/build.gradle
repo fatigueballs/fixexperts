@@ -19,7 +19,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner" // Testing
     }
 
     buildTypes {
@@ -35,6 +35,20 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+
+    configurations.all {
+        resolutionStrategy {
+            // Force these specific versions for all test-related dependencies
+            force("androidx.test:runner:1.5.0")
+            force("androidx.test:rules:1.5.0")
+            force("androidx.test.espresso:espresso-core:3.5.1")
+            force("androidx.test.ext:junit-ktx:1.1.5")
+
+            // You may need to force these as well if they appear in the error log
+            // force("androidx.test:core:1.5.0")
+            // force("androidx.test:core-ktx:1.5.0")
+        }
+    }
 }
 
 dependencies {
@@ -44,9 +58,16 @@ dependencies {
     implementation libs.material
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
+    implementation libs.androidx.ui.test
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+
+    androidTestImplementation("androidx.test:core-ktx:1.5.0") // AndroidX Test Core libraries
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5") // Core library
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") // Espresso core
+    androidTestImplementation("androidx.test:runner:1.5.0") // Used for running instrumented tests (Crucial for Espresso)
+    androidTestImplementation("androidx.test:rules:1.5.0") // For launching activities in tests
 
     implementation 'com.google.firebase:firebase-database:20.3.0'
     implementation 'com.google.firebase:firebase-auth:22.3.0'
