@@ -33,7 +33,7 @@ jobs:
           target: default
           arch: x86_64
           profile: Nexus 5
-          emulator-build: latest
+          emulator-build: 31c
           disable-animations: true
           # The script will run the test command after the emulator starts
           script: ./gradlew connectedDebugAndroidTest
