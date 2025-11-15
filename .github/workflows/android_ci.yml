@@ -23,6 +23,20 @@ jobs:
       - name: Grant execution permission to gradlew
         run: chmod +x gradlew
 
-      - name: Run UI Instrumentation (Espresso) Tests
-        # Runs the automated tests on a virtual Android environment
-        run: ./gradlew connectedAndroidTest
+      # ----------------------------------------------------
+      # ⬇️ NEW: STEP TO START THE ANDROID EMULATOR ⬇️
+      # ----------------------------------------------------
+      - name: Start AVD (Emulator)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30 # You can adjust this API level (e.g., 29, 31, 33)
+          target: default
+          arch: x86_64
+          profile: Nexus 5
+          emulator-build: latest
+          disable-animations: true
+          # The script will run the test command after the emulator starts
+          script: ./gradlew connectedDebugAndroidTest
+      # ----------------------------------------------------
+
+      # ⬆️ REMOVE the old "Run UI Instrumentation (Espresso) Tests" step entirely ⬆️
