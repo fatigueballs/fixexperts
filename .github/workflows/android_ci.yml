@@ -27,20 +27,21 @@ jobs:
       # ----------------------------------------------------
       #  FIXED EMULATOR CONFIG (ARM + HEADLESS + STABLE)
       # ----------------------------------------------------
-      - name: Start AVD and Run Espresso Tests
+      - name: Start AVD and Run Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 33
+          api-level: 30
           target: default
-          arch: arm64-v8a        # IMPORTANT: Works without hardware acceleration
-          profile: pixel_6       # A stable profile for ARM
+          arch: x86_64
+          script: ./gradlew connectedDebugAndroidTest
           disable-animations: true
           emulator-options: |
-            -no-window
-            -no-audio
-            -no-boot-anim
             -no-snapshot
+            -no-window
+            -noaudio
+            -gpu swiftshader_indirect
+            -skin 1080x1920
             -camera-back none
             -camera-front none
-            -gpu swiftshader_indirect
-          script: ./gradlew connectedDebugAndroidTest
+            -accel off             
+            script: ./gradlew connectedDebugAndroidTest
