@@ -7,8 +7,8 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed // display match
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-import org.junit.Before
 
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.Rule
@@ -49,6 +49,9 @@ class SuccessTest {
 
         onView(withId(R.id.etSearch))
             .check(matches(isDisplayed()))
+
+        onView(withId(R.id.btnLogout))
+            .perform(click())
     }
 
     @Test // test step, for this specific test case
