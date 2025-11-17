@@ -88,7 +88,7 @@ class LoginActivity : AppCompatActivity() {
                     found = true
                     saveLoginInfo(email, "user")
                     Toast.makeText(this, "User Login Successful!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, HomeActivity_User::class.java))
+                    startActivity(Intent(this, UserMainActivity::class.java))
                     finish()
                     break
                 }
@@ -148,7 +148,7 @@ class LoginActivity : AppCompatActivity() {
 
         if (savedEmail != null && userType != null) {
             when (userType) {
-                "user" -> startActivity(Intent(this, HomeActivity_User::class.java))
+                "user" -> startActivity(Intent(this, UserMainActivity::class.java))
                 "repairman" -> startActivity(Intent(this, HomeActivity_RM::class.java))
                 "admin" -> startActivity(Intent(this, AdminActivity::class.java))
             }
