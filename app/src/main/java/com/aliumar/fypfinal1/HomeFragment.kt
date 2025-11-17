@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -41,6 +42,18 @@ class HomeFragment : Fragment() {
             tvGreeting.text = "Welcome, Guest!"
         }
 
+        // --- LOGOUT BUTTON LOGIC ---
+        view.findViewById<ImageButton>(R.id.btnLogout).setOnClickListener {
+            // 1. Clear the shared preferences (logout session)
+            sharedPref?.edit()?.clear()?.apply()
+
+            // 2. Navigate back to LoginActivity
+            val intent = Intent(activity, LoginActivity::class.java)
+            // Clear the activity stack so the user cannot go back
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+
         // --- Set click listeners for the grid ---
 
         // Helper function to create the specific intent
@@ -49,8 +62,6 @@ class HomeFragment : Fragment() {
                 putExtra("SERVICE_TYPE", serviceName)
             }
         }
-
-        // --- UPDATED CLICK LISTENERS ---
 
         view.findViewById<LinearLayout>(R.id.grid_plumbing).setOnClickListener {
             startActivity(getServiceIntent("Plumbing"))
