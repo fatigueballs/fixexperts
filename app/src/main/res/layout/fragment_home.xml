@@ -25,7 +25,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="64dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/spartan_extrabold"
                 android:text="@string/home_greeting"
@@ -33,6 +33,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/btnLogout"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +41,7 @@
                 android:id="@+id/btnLogout"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="52dp"
                 android:layout_marginEnd="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Logout"
@@ -303,6 +304,23 @@
                 </LinearLayout>
 
             </GridLayout>
+
+            <TextView
+                android:id="@+id/ad_placeholder"
+                android:layout_width="349dp"
+                android:layout_height="175dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:background="#E0E0E0"
+                android:gravity="center"
+                android:text="AD SPACE"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/servicesGrid"
+                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
