@@ -37,15 +37,33 @@ class UnsuccessfulTest {
     }
 
     @Test
-    fun testInvalidLogin() {
+    fun testInvalidLoginEmail() {
 
-        // --- Test Case: TC_LOG_005 (Unsuccessful Login, Invalid password/ username) ---
+        // --- Test Case: TC_LOG_005 (Unsuccessful Login, Invalid Email) ---
 
         onView(withId(R.id.loginEmail))
-            .perform(typeText("InvalidUsername"), closeSoftKeyboard())
+            .perform(typeText("InvalidEmail"), closeSoftKeyboard())
 
         onView(withId(R.id.loginPassword))
-            .perform(typeText("InvalidPassword"), closeSoftKeyboard())
+            .perform(typeText("1234"), closeSoftKeyboard())
+
+        onView(withId(R.id.buttonLogin))
+            .perform(click())
+
+        onView(withId(R.id.tvTitle))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testInvalidLoginPassword() {
+
+        // --- Test Case: TC_LOG_006 (Unsuccessful Login, Invalid password) ---
+
+        onView(withId(R.id.loginEmail))
+            .perform(typeText("testuser@gmail.com"), closeSoftKeyboard())
+
+        onView(withId(R.id.loginPassword))
+            .perform(typeText("invalidPassword"), closeSoftKeyboard())
 
         onView(withId(R.id.buttonLogin))
             .perform(click())
