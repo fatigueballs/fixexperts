@@ -71,6 +71,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginEmail" />
 
+    <TextView
+        android:id="@+id/tvForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="45dp"
+        android:fontFamily="@font/spartan_extrabold"
+        android:text="Forgot Password?"
+        android:textColor="@color/primary_blue"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loginPassword" />
+
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="242dp"
@@ -85,14 +98,14 @@
         app:cornerRadius="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loginPassword" />
+        app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonRegister"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="242dp"
         android:layout_height="53dp"
-        android:layout_marginTop="78dp"
+        android:layout_marginTop="104dp"
         android:backgroundTint="#E5DFE6"
         android:fontFamily="@font/spartan_extrabold"
         android:paddingVertical="1dp"
@@ -101,12 +114,12 @@
         android:textColor="@color/icon_color_dark"
         android:textSize="16sp"
         app:cornerRadius="25dp"
-        app:strokeColor="@color/icon_color_dark"
-        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loginPassword" />
+        app:layout_constraintTop_toBottomOf="@id/loginPassword"
+        app:strokeColor="@color/icon_color_dark"
+        app:strokeWidth="2dp" />
 
     <TextView
         android:id="@+id/terms"

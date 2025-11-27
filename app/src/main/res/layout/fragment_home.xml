@@ -118,9 +118,9 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/spartan_extrabold"
                         android:text="@string/service_plumbing"
+                        android:textAlignment="center"
                         android:textColor="@color/icon_color_dark"
-                        android:textSize="13sp"
-                        android:textAlignment="center"/>
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout

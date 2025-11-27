@@ -5,9 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
@@ -15,10 +17,13 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var userRef: DatabaseReference
     private lateinit var repairmenRef: DatabaseReference
+    private lateinit var auth: FirebaseAuth
+
     private lateinit var loginEmail: EditText
     private lateinit var loginPassword: EditText
     private lateinit var loginButton: Button
     private lateinit var registerButton: Button
+    private lateinit var tvForgotPassword: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,25 +36,28 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // Initialize Firebase references (test)
         val database = FirebaseDatabase.getInstance(
             "https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/"
         )
         userRef = database.getReference("users")
         repairmenRef = database.getReference("repairmen")
+        auth = FirebaseAuth.getInstance()
 
-        // Link layout components
         loginEmail = findViewById(R.id.loginEmail)
         loginPassword = findViewById(R.id.loginPassword)
         loginButton = findViewById(R.id.buttonLogin)
         registerButton = findViewById(R.id.buttonRegister)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
 
-        // Check if user already logged in
         checkSavedLogin()
 
         registerButton.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
+        }
+
+        tvForgotPassword.setOnClickListener {
+            showForgotPasswordDialog()
         }
 
         loginButton.setOnClickListener {
@@ -64,28 +72,80 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun showForgotPasswordDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Reset Password")
+
+        val input = EditText(this)
+        input.hint = "Enter your email"
+        input.inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        val container = FrameLayout(this)
+        val params = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        params.leftMargin = 50
+        params.rightMargin = 50
+        input.layoutParams = params
+        container.addView(input)
+        builder.setView(container)
+
+        builder.setPositiveButton("Send") { _, _ ->
+            val email = input.text.toString().trim()
+            if (email.isNotEmpty()) {
+                auth.sendPasswordResetEmail(email)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Reset link sent to your email.", Toast.LENGTH_LONG).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(this, "Please enter an email.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.show()
+    }
+
     private fun checkAdminLogin(email: String, password: String) {
         // Hardcoded Admin Credentials
         if (email == "admin@fixexperts.com" && password == "admin123") {
             saveLoginInfo(email, "admin")
             Toast.makeText(this, "Admin Login Successful!", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, AdminActivity::class.java)) // NEW ADMIN ACTIVITY
+            startActivity(Intent(this, AdminActivity::class.java))
             finish()
             return
         }
-        // If not admin, proceed to check regular users
-        loginUser(email, password)
+        // Use Firebase Auth for regular users/repairmen
+        performAuthLogin(email, password)
     }
 
-    private fun loginUser(email: String, password: String) {
-        userRef.get().addOnSuccessListener { snapshot ->
-            var found = false
-            for (userSnapshot in snapshot.children) {
-                val userEmail = userSnapshot.child("email").value?.toString()
-                val userPassword = userSnapshot.child("password").value?.toString()
+    private fun performAuthLogin(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener { result ->
+                val user = auth.currentUser
+                if (user != null && user.isEmailVerified) {
+                    // Auth successful and verified -> Find role in DB
+                    findUserRoleAndRedirect(email)
+                } else {
+                    auth.signOut()
+                    Toast.makeText(this, "Please verify your email address first.", Toast.LENGTH_LONG).show()
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Login Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 
-                if (email == userEmail && password == userPassword) {
-                    found = true
+    private fun findUserRoleAndRedirect(email: String) {
+        // 1. Check Users Node
+        userRef.get().addOnSuccessListener { snapshot ->
+            var isUser = false
+            for (child in snapshot.children) {
+                val dbEmail = child.child("email").value?.toString()
+                if (dbEmail.equals(email, ignoreCase = true)) {
+                    isUser = true
                     saveLoginInfo(email, "user")
                     Toast.makeText(this, "User Login Successful!", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, UserMainActivity::class.java))
@@ -93,42 +153,43 @@ class LoginActivity : AppCompatActivity() {
                     break
                 }
             }
-            if (!found) {
-                checkRepairmanLogin(email, password)
+            // 2. If not in Users, check Repairmen Node
+            if (!isUser) {
+                checkRepairmanNode(email)
             }
         }.addOnFailureListener {
-            Toast.makeText(this, "Database error: ${it.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "DB Error: ${it.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun checkRepairmanLogin(email: String, password: String) {
+    private fun checkRepairmanNode(email: String) {
         repairmenRef.get().addOnSuccessListener { snapshot ->
-            var found = false
-            for (repairmanSnapshot in snapshot.children) {
-                val repairEmail = repairmanSnapshot.child("email").value?.toString()
-                val repairPassword = repairmanSnapshot.child("password").value?.toString()
-                // NEW: Read the approval status
-                val isApproved = repairmanSnapshot.child("isApprovedByAdmin").value as? Boolean ?: false
+            var isRepairman = false
+            for (child in snapshot.children) {
+                val dbEmail = child.child("email").value?.toString()
+                if (dbEmail.equals(email, ignoreCase = true)) {
+                    isRepairman = true
+                    val isApproved = child.child("isApprovedByAdmin").value as? Boolean ?: false
 
-                if (email == repairEmail && password == repairPassword) {
-                    found = true
-                    if (isApproved) { // <--- CORE CHECK: ONLY ALLOW LOGIN IF APPROVED
+                    if (isApproved) {
                         saveLoginInfo(email, "repairman")
                         Toast.makeText(this, "Repairman Login Successful!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, HomeActivity_RM::class.java))
                         finish()
                     } else {
-                        // <--- BLOCK LOGIN AND INFORM USER
-                        Toast.makeText(this, "Account not yet verified by Admin. Please wait for approval.", Toast.LENGTH_LONG).show()
+                        auth.signOut() // Logout if not approved
+                        Toast.makeText(this, "Account pending Admin approval.", Toast.LENGTH_LONG).show()
                     }
                     break
                 }
             }
-            if (!found) {
-                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
+            if (!isRepairman) {
+                // Auth exists but data missing in DB
+                auth.signOut()
+                Toast.makeText(this, "User data not found in database.", Toast.LENGTH_SHORT).show()
             }
         }.addOnFailureListener {
-            Toast.makeText(this, "Database error: ${it.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "DB Error: ${it.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
