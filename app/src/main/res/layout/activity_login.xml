@@ -135,6 +135,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <ImageButton
+        android:id="@+id/btnToggleLoginPass"
+        android:layout_width="48dp"
+        android:layout_height="0dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_view"
+        app:tint="@color/text_secondary"
+        app:layout_constraintBottom_toBottomOf="@id/loginPassword"
+        app:layout_constraintEnd_toEndOf="@id/loginPassword"
+        app:layout_constraintTop_toTopOf="@id/loginPassword" />
+
     <TextView
         android:id="@+id/tvVersion"
         android:layout_width="wrap_content"

@@ -14,6 +14,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import android.util.Log
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -26,6 +28,8 @@ class RegisterActivity : AppCompatActivity() {
 
     // Auth Reference
     private lateinit var auth: FirebaseAuth
+    private lateinit var btnToggleRegisterPass: ImageButton
+    private var isRegisterPassVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +64,21 @@ class RegisterActivity : AppCompatActivity() {
         val registerPassword = findViewById<EditText>(R.id.registerPassword)
         val repairmanCheck = findViewById<CheckBox>(R.id.repairmanTrue)
         val registerButton = findViewById<Button>(R.id.buttonRegister)
+
+        // Initialize the toggle button
+        btnToggleRegisterPass = findViewById(R.id.btnToggleRegisterPass)
+
+        // Add Click Listener for Password Toggle
+        btnToggleRegisterPass.setOnClickListener {
+            isRegisterPassVisible = !isRegisterPassVisible
+            if (isRegisterPassVisible) {
+                registerPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            } else {
+                registerPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+            }
+            registerPassword.setSelection(registerPassword.text.length)
+        }
+
         val pickLocationButton = findViewById<Button>(R.id.buttonPickLocation)
         textLocationStatus = findViewById(R.id.textLocationStatus)
 

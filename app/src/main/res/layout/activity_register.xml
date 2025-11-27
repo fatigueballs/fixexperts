@@ -25,6 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -85,22 +86,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/registerUsername" />
 
-            <EditText
-                android:id="@+id/registerPassword"
-                android:layout_width="320dp"
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/input_field_background"
-                android:fontFamily="@font/spartan_extrabold"
-                android:hint="Create Password"
-                android:inputType="textPassword"
-                android:padding="12dp"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registerEmail" />
+                android:layout_marginTop="16dp">
 
+                <EditText
+                    android:id="@+id/registerPassword"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/input_field_background"
+                    android:fontFamily="@font/spartan_extrabold"
+                    android:hint="Create Password"
+                    android:inputType="textPassword"
+                    android:padding="12dp"
+                    android:paddingEnd="48dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/btnToggleRegisterPass"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_horizontal|end"
+                    android:layout_marginEnd="45dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_view"
+                    app:tint="@color/text_secondary"
+                    android:contentDescription="Toggle password visibility" />
+            </FrameLayout>
 
             <CheckBox
                 android:id="@+id/repairmanTrue"

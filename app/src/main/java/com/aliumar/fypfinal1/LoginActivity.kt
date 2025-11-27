@@ -12,6 +12,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 
 class LoginActivity : AppCompatActivity() {
 
@@ -24,6 +26,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
     private lateinit var registerButton: Button
     private lateinit var tvForgotPassword: TextView
+    private lateinit var btnToggleLoginPass: ImageButton
+    private var isLoginPassVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +52,27 @@ class LoginActivity : AppCompatActivity() {
         loginButton = findViewById(R.id.buttonLogin)
         registerButton = findViewById(R.id.buttonRegister)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
+
+        // Initialize the toggle button
+        btnToggleLoginPass = findViewById(R.id.btnToggleLoginPass)
+
+        // Add Click Listener for Password Toggle
+        btnToggleLoginPass.setOnClickListener {
+            isLoginPassVisible = !isLoginPassVisible
+            if (isLoginPassVisible) {
+                // Show Password
+                loginPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                // Optional: Change icon to "open eye" if you have a specific drawable
+                // btnToggleLoginPass.setImageResource(R.drawable.ic_eye_open)
+            } else {
+                // Hide Password
+                loginPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                // Optional: Change icon back
+                // btnToggleLoginPass.setImageResource(R.drawable.ic_eye_closed)
+            }
+            // Move cursor to the end of text
+            loginPassword.setSelection(loginPassword.text.length)
+        }
 
         checkSavedLogin()
 
