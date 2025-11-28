@@ -100,6 +100,18 @@ class ChatActivity : AppCompatActivity() {
             }
             sendMessage(messageText)
         }
+
+        // ADD THIS BLOCK: Scroll to bottom when keyboard opens
+        recyclerViewChat.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+            if (bottom < oldBottom) {
+                // The keyboard has opened (height decreased)
+                if (messageList.isNotEmpty()) {
+                    recyclerViewChat.postDelayed({
+                        recyclerViewChat.smoothScrollToPosition(messageList.size - 1)
+                    }, 100)
+                }
+            }
+        }
     }
 
     private fun sendMessage(message: String) {
