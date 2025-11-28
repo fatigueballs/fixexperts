@@ -38,6 +38,7 @@
         <activity android:name=".UserActivityActivity"></activity>
         <activity android:name=".LocationPickerActivity"></activity>
         <activity android:name=".AdminActivity"></activity>
+        <activity android:name=".ChatActivity" android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".AdminViewRepairmenActivity"></activity>
         <activity android:name=".AdminViewUsersActivity"></activity>

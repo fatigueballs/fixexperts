@@ -8,10 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class UserRequestAdapter(
-    // The lambda name will remain the same but the action is now Confirm Job Done
     private val requests: List<ServiceRequest>,
     private val onConfirmPayment: (ServiceRequest) -> Unit,
-    private val onRate: (ServiceRequest) -> Unit
+    private val onRate: (ServiceRequest) -> Unit,
+    // NEW: Chat Listener
+    private val onChat: (ServiceRequest) -> Unit
 ) : RecyclerView.Adapter<UserRequestAdapter.UserRequestViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserRequestViewHolder {
@@ -25,11 +26,10 @@ class UserRequestAdapter(
         holder.textRepairmanName.text = "To: ${request.repairmanName}"
         holder.textServiceType.text = "Service: ${request.serviceType}"
 
-        // Logic to determine button visibility and status text
         holder.buttonConfirmPayment.visibility = View.GONE
         holder.buttonRateRepairman.visibility = View.GONE
+        holder.buttonChatUser.visibility = View.GONE // Reset
 
-        // Change button text to reflect new role (User confirms job is done)
         holder.buttonConfirmPayment.text = "Confirm Job Done"
 
         when {
@@ -37,28 +37,39 @@ class UserRequestAdapter(
                 // Job and Payment confirmed
                 if (request.userRated) {
                     holder.textStatusUser.text = "Status: Fully Completed and Rated"
+                    holder.buttonChatUser.visibility = View.VISIBLE // Optional: Can chat in history
                 } else {
                     holder.textStatusUser.text = "Status: Completed - Rate Now!"
                     holder.buttonRateRepairman.visibility = View.VISIBLE
+                    holder.buttonChatUser.visibility = View.VISIBLE
                 }
             }
             request.userConfirmedJobDone -> {
-                // User confirmed job done, awaiting RM payment confirmation
                 holder.textStatusUser.text = "Status: Job Done - Awaiting Payment Confirmation"
+                holder.buttonChatUser.visibility = View.VISIBLE
             }
             request.status == "Accepted" -> {
-                // RM accepted, User needs to confirm job done (which means service is physically completed)
                 holder.textStatusUser.text = "Status: Accepted (Tap when job is complete)"
                 holder.buttonConfirmPayment.visibility = View.VISIBLE
+                holder.buttonChatUser.visibility = View.VISIBLE // Allow chat
+            }
+            request.status == "Pending" -> {
+                holder.textStatusUser.text = "Status: Pending"
+                // Chat usually disabled while pending
+            }
+            request.status == "Declined" -> {
+                holder.textStatusUser.text = "Status: Declined"
             }
             else -> {
                 holder.textStatusUser.text = "Status: ${request.status}"
+                // Default show chat if not declined
+                if (request.status != "Declined") holder.buttonChatUser.visibility = View.VISIBLE
             }
         }
 
-        // The click handler's name remains `onConfirmPayment` but it performs "Confirm Job Done" logic
         holder.buttonConfirmPayment.setOnClickListener { onConfirmPayment(request) }
         holder.buttonRateRepairman.setOnClickListener { onRate(request) }
+        holder.buttonChatUser.setOnClickListener { onChat(request) }
     }
 
     override fun getItemCount(): Int = requests.size
@@ -69,5 +80,6 @@ class UserRequestAdapter(
         val textStatusUser: TextView = itemView.findViewById(R.id.textStatusUser)
         val buttonConfirmPayment: Button = itemView.findViewById(R.id.buttonConfirmPayment)
         val buttonRateRepairman: Button = itemView.findViewById(R.id.buttonRateRepairman)
+        val buttonChatUser: Button = itemView.findViewById(R.id.buttonChatUser) // NEW
     }
 }

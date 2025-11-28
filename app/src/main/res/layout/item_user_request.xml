@@ -44,6 +44,15 @@
             android:text="Status: Accepted" />
 
         <Button
+            android:id="@+id/buttonChatUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#4CAF50"
+            android:text="Chat with Repairman"
+            android:visibility="gone" />
+
+        <Button
             android:id="@+id/buttonConfirmPayment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -68,7 +68,15 @@ class ActivityFragment : Fragment() {
         adapter = UserRequestAdapter(
             filteredList,
             { request -> handleJobDoneConfirmation(request) },
-            { request -> launchRatingActivity(request) }
+            { request -> launchRatingActivity(request) },
+            { request ->
+                // Chat Logic for Fragment
+                val intent = Intent(requireContext(), ChatActivity::class.java)
+                intent.putExtra("REQUEST_ID", request.id)
+                intent.putExtra("CURRENT_USER_ID", actualUserId)
+                intent.putExtra("OTHER_USER_NAME", request.repairmanName)
+                startActivity(intent)
+            }
         )
 
         recyclerViewRequests.adapter = adapter

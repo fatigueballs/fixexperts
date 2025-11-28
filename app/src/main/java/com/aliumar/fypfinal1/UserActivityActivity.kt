@@ -18,19 +18,18 @@ import com.google.firebase.database.*
 class UserActivityActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewRequests: RecyclerView
-    private lateinit var tabLayoutStatus: TabLayout // NEW
-    private lateinit var spinnerCategory: Spinner // NEW
+    private lateinit var tabLayoutStatus: TabLayout
+    private lateinit var spinnerCategory: Spinner
 
-    private lateinit var requestList: MutableList<ServiceRequest> // Holds all fetched requests
-    private lateinit var filteredList: MutableList<ServiceRequest> // Holds requests after filtering
+    private lateinit var requestList: MutableList<ServiceRequest>
+    private lateinit var filteredList: MutableList<ServiceRequest>
     private lateinit var adapter: UserRequestAdapter
     private lateinit var dbRef: DatabaseReference
     private var actualUserId: String? = null
 
-    private var currentStatusFilter: String = "Ongoing" // "Ongoing" or "Completed"
+    private var currentStatusFilter: String = "Ongoing"
     private var currentCategoryFilter: String = "All Categories"
 
-    // List of all available services (including the 'All' option)
     private val ALL_SERVICES_FILTER = listOf(
         "All Categories",
         "Air Conditioning Fix",
@@ -45,7 +44,6 @@ class UserActivityActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_activity)
 
-        // ADDED: Back button listener
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener {
             finish()
@@ -53,28 +51,36 @@ class UserActivityActivity : AppCompatActivity() {
 
         recyclerViewRequests = findViewById(R.id.recyclerViewUserRequests)
         recyclerViewRequests.layoutManager = LinearLayoutManager(this)
-        tabLayoutStatus = findViewById(R.id.tabLayoutStatus) // NEW
-        spinnerCategory = findViewById(R.id.spinnerCategory) // NEW
+        tabLayoutStatus = findViewById(R.id.tabLayoutStatus)
+        spinnerCategory = findViewById(R.id.spinnerCategory)
 
         requestList = mutableListOf()
-        filteredList = mutableListOf() // Initialize filtered list
+        filteredList = mutableListOf()
 
+        // UPDATED ADAPTER INITIALIZATION
         adapter = UserRequestAdapter(
-            filteredList, // Use the filtered list for the adapter
-            { request -> handleJobDoneConfirmation(request) },
-            { request -> launchRatingActivity(request) }
+            filteredList,
+            onConfirmPayment = { request -> handleJobDoneConfirmation(request) },
+            onRate = { request -> launchRatingActivity(request) },
+            onChat = { request ->
+                // Launch Chat
+                val intent = Intent(this, ChatActivity::class.java)
+                intent.putExtra("REQUEST_ID", request.id)
+                intent.putExtra("CURRENT_USER_ID", actualUserId) // Passed as sender
+                intent.putExtra("OTHER_USER_NAME", request.repairmanName) // Chatting with Repairman
+                startActivity(intent)
+            }
         )
 
         recyclerViewRequests.adapter = adapter
         dbRef = FirebaseDatabase.getInstance().getReference("serviceRequests")
 
-        setupCategorySpinner() // NEW
-        setupStatusTabs() // NEW
+        setupCategorySpinner()
+        setupStatusTabs()
 
         resolveUserIdAndLoadRequests()
     }
 
-    // NEW: Setup spinner with categories
     private fun setupCategorySpinner() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, ALL_SERVICES_FILTER)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -90,7 +96,6 @@ class UserActivityActivity : AppCompatActivity() {
         }
     }
 
-    // NEW: Setup tabs for Ongoing/History
     private fun setupStatusTabs() {
         tabLayoutStatus.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -103,7 +108,6 @@ class UserActivityActivity : AppCompatActivity() {
     }
 
     private fun resolveUserIdAndLoadRequests() {
-        // ... (existing logic to fetch user ID)
         val sharedPref = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
         val loggedInEmail = sharedPref.getString("email", null)
 
@@ -112,7 +116,6 @@ class UserActivityActivity : AppCompatActivity() {
             return
         }
 
-        // Use the Firebase instance that has the correct database URL
         val database = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val userRef = database.getReference("users")
 
@@ -122,9 +125,9 @@ class UserActivityActivity : AppCompatActivity() {
                 for (uSnap in snapshot.children) {
                     val user = uSnap.getValue(User::class.java)
                     if (user != null && user.email.equals(loggedInEmail, ignoreCase = true)) {
-                        actualUserId = uSnap.key // Get the Firebase key
+                        actualUserId = uSnap.key
                         found = true
-                        loadRequests() // Only load requests AFTER the ID is resolved
+                        loadRequests()
                         break
                     }
                 }
@@ -158,7 +161,6 @@ class UserActivityActivity : AppCompatActivity() {
                             requestList.add(request)
                         }
                     }
-                    // NEW: Apply filters after initial load
                     applyFilters()
                 }
 
@@ -168,21 +170,17 @@ class UserActivityActivity : AppCompatActivity() {
             })
     }
 
-    // NEW: Function to apply all active filters
     private fun applyFilters() {
         filteredList.clear()
 
         for (request in requestList) {
-            // 1. Status Filter (Ongoing vs. Completed)
-            // A request is completed if both user and repairman confirmed the job/payment
             val isCompleted = request.userConfirmedJobDone && request.repairmanConfirmedPayment
             val statusMatches = when (currentStatusFilter) {
-                "Ongoing" -> !isCompleted // Not completed
+                "Ongoing" -> !isCompleted
                 "Completed" -> isCompleted
-                else -> false // Should not happen
+                else -> false
             }
 
-            // 2. Category Filter
             val categoryMatches = currentCategoryFilter == "All Categories" ||
                     request.serviceType.equals(currentCategoryFilter, ignoreCase = true)
 
@@ -190,10 +188,7 @@ class UserActivityActivity : AppCompatActivity() {
                 filteredList.add(request)
             }
         }
-
-        // Sort by date (newest first)
         filteredList.sortByDescending { it.dateMillis }
-
         adapter.notifyDataSetChanged()
     }
 
