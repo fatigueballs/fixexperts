@@ -19,7 +19,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner" // Testing
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -43,45 +43,50 @@ android {
             force("androidx.test:rules:1.5.0")
             force("androidx.test.espresso:espresso-core:3.5.1")
             force("androidx.test.ext:junit-ktx:1.1.5")
-
-            // You may need to force these as well if they appear in the error log
-            // force("androidx.test:core:1.5.0")
-            // force("androidx.test:core-ktx:1.5.0")
         }
     }
 }
 
 dependencies {
 
+    // Core Android Libraries (from Version Catalog)
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.ui.test
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.junit
-    androidTestImplementation libs.androidx.espresso.core
 
-    androidTestImplementation("androidx.test:core-ktx:1.5.0") // AndroidX Test Core libraries
-    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5") // Core library
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") // Espresso core
-    androidTestImplementation("androidx.test:runner:1.5.0") // Used for running instrumented tests (Crucial for Espresso)
-    androidTestImplementation("androidx.test:rules:1.5.0") // For launching activities in tests
+    // Image Loading (Glide)
+    implementation libs.glide
 
-    implementation 'com.google.firebase:firebase-database:20.3.0'
-    implementation 'com.google.firebase:firebase-auth:22.3.0'
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation platform('com.google.firebase:firebase-bom:34.3.0')
+    // --- FIREBASE SETUP ---
+    // Import the Firebase BOM (Bill of Materials) to manage versions
+    implementation platform(libs.firebase.bom)
 
-    implementation 'com.google.android.material:material:1.8.0'
+    // Add Firebase libraries without version numbers (BOM handles them)
+    implementation libs.firebase.auth
+    implementation libs.firebase.database
+    implementation libs.firebase.storage
+    implementation libs.firebase.analytics
+
+    // --- OTHER UI & SERVICES ---
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.firebase:firebase-auth:22.1.1'
-    implementation 'com.google.firebase:firebase-database:20.1.0'     // or firestore if you prefer
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
+    // --- TESTING ---
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+
+    // Explicit Test Dependencies (kept from your original config)
+    androidTestImplementation("androidx.test:core-ktx:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:runner:1.5.0")
+    androidTestImplementation("androidx.test:rules:1.5.0")
 }
 
 apply plugin: 'com.google.gms.google-services'

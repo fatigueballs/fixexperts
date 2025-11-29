@@ -1,19 +1,24 @@
 package com.aliumar.fypfinal1
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageButton
-import android.widget.Toast
-import android.widget.Spinner
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.Spinner
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 class UserActivityActivity : AppCompatActivity() {
 
@@ -26,6 +31,7 @@ class UserActivityActivity : AppCompatActivity() {
     private lateinit var adapter: UserRequestAdapter
     private lateinit var dbRef: DatabaseReference
     private var actualUserId: String? = null
+    private var selectedRequestIdForUpload: String? = null
 
     private var currentStatusFilter: String = "Ongoing"
     private var currentCategoryFilter: String = "All Categories"
@@ -40,14 +46,17 @@ class UserActivityActivity : AppCompatActivity() {
         "Cleaning Service"
     )
 
+    // Image Picker
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let { uploadImageToFirebase(it) }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_activity)
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
-        backButton.setOnClickListener {
-            finish()
-        }
+        backButton.setOnClickListener { finish() }
 
         recyclerViewRequests = findViewById(R.id.recyclerViewUserRequests)
         recyclerViewRequests.layoutManager = LinearLayoutManager(this)
@@ -57,18 +66,20 @@ class UserActivityActivity : AppCompatActivity() {
         requestList = mutableListOf()
         filteredList = mutableListOf()
 
-        // UPDATED ADAPTER INITIALIZATION
         adapter = UserRequestAdapter(
             filteredList,
-            onConfirmPayment = { request -> handleJobDoneConfirmation(request) },
+            onConfirmPayment = { /* Old Logic kept for safety */ },
             onRate = { request -> launchRatingActivity(request) },
             onChat = { request ->
-                // Launch Chat
                 val intent = Intent(this, ChatActivity::class.java)
                 intent.putExtra("REQUEST_ID", request.id)
-                intent.putExtra("CURRENT_USER_ID", actualUserId) // Passed as sender
-                intent.putExtra("OTHER_USER_NAME", request.repairmanName) // Chatting with Repairman
+                intent.putExtra("CURRENT_USER_ID", actualUserId)
+                intent.putExtra("OTHER_USER_NAME", request.repairmanName)
                 startActivity(intent)
+            },
+            onUploadPayment = { request ->
+                selectedRequestIdForUpload = request.id
+                getContent.launch("image/*")
             }
         )
 
@@ -77,7 +88,6 @@ class UserActivityActivity : AppCompatActivity() {
 
         setupCategorySpinner()
         setupStatusTabs()
-
         resolveUserIdAndLoadRequests()
     }
 
@@ -91,7 +101,6 @@ class UserActivityActivity : AppCompatActivity() {
                 currentCategoryFilter = ALL_SERVICES_FILTER[position]
                 applyFilters()
             }
-
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
@@ -110,11 +119,7 @@ class UserActivityActivity : AppCompatActivity() {
     private fun resolveUserIdAndLoadRequests() {
         val sharedPref = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
         val loggedInEmail = sharedPref.getString("email", null)
-
-        if (loggedInEmail == null) {
-            Toast.makeText(this, "Error: Login information missing.", Toast.LENGTH_LONG).show()
-            return
-        }
+        if (loggedInEmail == null) return
 
         val database = FirebaseDatabase.getInstance("https://fixexperts-database-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val userRef = database.getReference("users")
@@ -131,25 +136,13 @@ class UserActivityActivity : AppCompatActivity() {
                         break
                     }
                 }
-                if (!found) {
-                    Toast.makeText(this@UserActivityActivity, "User not found in database.", Toast.LENGTH_LONG).show()
-                }
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@UserActivityActivity, "Failed to resolve ID: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 
     private fun loadRequests() {
-        val currentUserId = actualUserId
-
-        if (currentUserId.isNullOrEmpty()) {
-            Toast.makeText(this, "Could not retrieve User ID.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+        val currentUserId = actualUserId ?: return
         dbRef.orderByChild("userId").equalTo(currentUserId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -163,18 +156,17 @@ class UserActivityActivity : AppCompatActivity() {
                     }
                     applyFilters()
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@UserActivityActivity, "Failed to load requests", Toast.LENGTH_SHORT).show()
-                }
+                override fun onCancelled(error: DatabaseError) {}
             })
     }
 
     private fun applyFilters() {
         filteredList.clear()
-
         for (request in requestList) {
-            val isCompleted = request.userConfirmedJobDone && request.repairmanConfirmedPayment
+            // Updated Completed logic
+            val isJobFullyDone = request.workProofUrl.isNotEmpty() && request.paymentProofUrl.isNotEmpty()
+            val isCompleted = request.userRated || isJobFullyDone
+
             val statusMatches = when (currentStatusFilter) {
                 "Ongoing" -> !isCompleted
                 "Completed" -> isCompleted
@@ -192,18 +184,28 @@ class UserActivityActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
-    private fun handleJobDoneConfirmation(request: ServiceRequest) {
-        val updates = HashMap<String, Any>()
-        updates["userConfirmedJobDone"] = true
-        updates["status"] = "Job Confirmed by User"
+    private fun uploadImageToFirebase(imageUri: Uri) {
+        val reqId = selectedRequestIdForUpload ?: return
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Uploading Payment Receipt...")
+        progressDialog.show()
 
-        dbRef.child(request.id).updateChildren(updates)
+        val fileName = "payment_proof/${UUID.randomUUID()}.jpg"
+        val storageRef = FirebaseStorage.getInstance().getReference(fileName)
+
+        storageRef.putFile(imageUri)
             .addOnSuccessListener {
-                Toast.makeText(this, "Job completion confirmed. Awaiting repairman's payment confirmation.", Toast.LENGTH_LONG).show()
-                applyFilters()
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    val url = uri.toString()
+                    dbRef.child(reqId).child("paymentProofUrl").setValue(url)
+                    dbRef.child(reqId).child("status").setValue("Payment Uploaded (Waiting for Rating)")
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "Payment receipt uploaded!", Toast.LENGTH_SHORT).show()
+                }
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Failed to confirm job completion", Toast.LENGTH_SHORT).show()
+                progressDialog.dismiss()
+                Toast.makeText(this, "Upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

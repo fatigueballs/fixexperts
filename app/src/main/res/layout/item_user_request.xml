@@ -1,73 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="12dp">
+    android:elevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp"
-        android:background="@android:color/white">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/textRepairmanName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="To: Repairman Name"
-            android:textColor="@color/icon_color_dark"
-            android:fontFamily="@font/spartan_extrabold"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:text="Repairman Name"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/textServiceType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/icon_color_dark"
-            android:fontFamily="@font/spartan_extrabold"
-            android:text="Service Type" />
+            android:text="Service Type"
+            android:textColor="#555555"/>
 
         <TextView
             android:id="@+id/textStatusUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/icon_color_dark"
-            android:fontFamily="@font/spartan_extrabold"
-            android:layout_marginTop="4dp"
-            android:text="Status: Accepted" />
+            android:text="Status: Pending"
+            android:layout_marginTop="8dp"
+            android:textColor="#0000FF"/>
 
-        <Button
-            android:id="@+id/buttonChatUser"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#4CAF50"
-            android:text="Chat with Repairman"
-            android:visibility="gone" />
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:gravity="end">
 
-        <Button
-            android:id="@+id/buttonConfirmPayment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Confirm Job Done"
-            android:visibility="gone" />
+            <Button
+                android:id="@+id/buttonChatUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chat"
+                android:layout_marginEnd="8dp"/>
 
-        <Button
-            android:id="@+id/buttonRateRepairman"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Rate Repairman"
-            android:visibility="gone" />
+            <Button
+                android:id="@+id/buttonConfirmPayment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload Receipt"
+                android:backgroundTint="#FF9800"
+                android:visibility="gone"/>
 
+            <Button
+                android:id="@+id/buttonRateRepairman"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rate"
+                android:backgroundTint="#4CAF50"
+                android:visibility="gone"/>
+        </LinearLayout>
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

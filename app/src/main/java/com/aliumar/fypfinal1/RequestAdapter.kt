@@ -1,15 +1,17 @@
 package com.aliumar.fypfinal1
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.recyclerview.widget.RecyclerView
 
 class RequestAdapter(
     private val requests: List<ServiceRequest>,
@@ -27,85 +29,77 @@ class RequestAdapter(
         holder.textUserName.text = "From: ${request.userName}"
         holder.textDescription.text = "Service: ${request.serviceType}"
 
-        // Reset visibility
+        // 1. Reset Visibility
         holder.buttonAccept.visibility = View.GONE
         holder.buttonDecline.visibility = View.GONE
         holder.buttonDone.visibility = View.GONE
-        holder.buttonChat.visibility = View.GONE // Default to GONE
-        holder.buttonDone.text = "Confirm Payment"
+        holder.buttonChat.visibility = View.GONE
 
+        // Default Details Text
+        holder.buttonViewDetails.text = "View Details"
+        holder.buttonViewDetails.visibility = View.VISIBLE
+
+        // 2. Status Logic
         when {
             request.status == "Pending" -> {
                 holder.textStatus.text = "Status: Pending"
                 holder.buttonAccept.visibility = View.VISIBLE
                 holder.buttonDecline.visibility = View.VISIBLE
-                // Chat is usually not allowed until accepted
-            }
-            request.status == "Accepted" || request.userConfirmedJobDone -> {
-                // Show chat once accepted
-                holder.buttonChat.visibility = View.VISIBLE
-
-                if (request.userConfirmedJobDone && request.repairmanConfirmedPayment) {
-                    holder.textStatus.text = "Status: Fully Completed (Payment Confirmed)"
-                } else if (request.userConfirmedJobDone) {
-                    holder.textStatus.text = "Status: Job Done by User - Await Payment Confirmation"
-                    if (!request.repairmanConfirmedPayment) {
-                        holder.buttonDone.visibility = View.VISIBLE
-                    }
-                } else if (request.status == "Accepted") {
-                    holder.textStatus.text = "Status: Accepted (Awaiting User Job Confirmation)"
-                } else {
-                    holder.textStatus.text = "Status: Accepted (In Progress)"
-                }
             }
             request.status == "Declined" -> {
                 holder.textStatus.text = "Status: Declined"
             }
             else -> {
-                // For completed or other statuses, we might still want chat visible for history
-                holder.textStatus.text = "Status: ${request.status}"
-                if (request.status != "Declined") {
-                    holder.buttonChat.visibility = View.VISIBLE
+                // Accepted / Ongoing / Completed
+                holder.buttonChat.visibility = View.VISIBLE
+
+                if (request.repairmanConfirmedPayment) {
+                    holder.textStatus.text = "Status: Completed & Paid"
+                }
+                else if (request.paymentProofImage.isNotEmpty()) {
+                    // User uploaded receipt -> Repairman needs to confirm
+                    holder.textStatus.text = "Status: Payment Receipt Uploaded"
+                    holder.buttonDone.visibility = View.VISIBLE
+                    holder.buttonDone.text = "Confirm Payment"
+
+                    // Allow viewing the receipt
+                    holder.buttonViewDetails.text = "View Receipt"
+                    holder.buttonViewDetails.setOnClickListener {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(request.paymentProofImage))
+                        holder.itemView.context.startActivity(intent)
+                    }
+                }
+                else if (request.workProofImage.isNotEmpty()) {
+                    holder.textStatus.text = "Status: Work Proof Sent - Waiting for Payment"
+                }
+                else if (request.status == "Accepted") {
+                    holder.textStatus.text = "Status: Accepted - Work in Progress"
                 }
             }
         }
 
-        holder.buttonViewDetails.setOnClickListener {
-            showDetailsPopup(request, holder.itemView.context)
-        }
-
+        // 3. Click Listeners
         holder.buttonAccept.setOnClickListener { onAction(request, "accept") }
         holder.buttonDecline.setOnClickListener { onAction(request, "decline") }
         holder.buttonDone.setOnClickListener { onAction(request, "confirm_payment") }
-
-        // Chat Action
         holder.buttonChat.setOnClickListener { onAction(request, "chat") }
+
+        // Standard details popup if not viewing receipt
+        if (holder.buttonViewDetails.text == "View Details") {
+            holder.buttonViewDetails.setOnClickListener {
+                showDetailsPopup(request, holder.itemView.context)
+            }
+        }
     }
 
     private fun showDetailsPopup(request: ServiceRequest, context: android.content.Context) {
         val dateFormat = SimpleDateFormat("dd MMMM yyyy (hh:mm a)", Locale.getDefault())
-        val dateTimeString = try {
-            dateFormat.format(Date(request.dateMillis))
-        } catch (e: Exception) {
-            request.date
-        }
-
-        val message = """
-            Customer: ${request.userName}
-            Service: ${request.serviceType}
-            
-            Scheduled For: $dateTimeString
-            
-            Problem Description:
-            ${request.problemDescription.ifEmpty { "No description provided." }}
-        """.trimIndent()
+        val dateTimeString = try { dateFormat.format(Date(request.dateMillis)) } catch (e: Exception) { request.date }
 
         AlertDialog.Builder(context)
-            .setTitle("Service Request Details")
-            .setMessage(message)
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setTitle("Details")
+            .setMessage("Problem: ${request.problemDescription}\nDate: $dateTimeString")
+            .setPositiveButton("OK", null)
             .show()
     }
 
@@ -117,9 +111,10 @@ class RequestAdapter(
         val textStatus: TextView = itemView.findViewById(R.id.textStatus)
         val buttonAccept: Button = itemView.findViewById(R.id.buttonAccept)
         val buttonDecline: Button = itemView.findViewById(R.id.buttonDecline)
+        val buttonChat: Button = itemView.findViewById(R.id.buttonChat)
+
+        // These match item_request.xml
         val buttonDone: Button = itemView.findViewById(R.id.buttonDone)
         val buttonViewDetails: Button = itemView.findViewById(R.id.buttonViewDetails)
-        // NEW Chat Button
-        val buttonChat: Button = itemView.findViewById(R.id.buttonChat)
     }
 }

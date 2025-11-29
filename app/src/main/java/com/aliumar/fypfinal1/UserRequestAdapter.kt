@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 
 class UserRequestAdapter(
     private val requests: List<ServiceRequest>,
-    private val onConfirmPayment: (ServiceRequest) -> Unit,
+    private val onConfirmPayment: (ServiceRequest) -> Unit, // Legacy param, can remain
     private val onRate: (ServiceRequest) -> Unit,
-    // NEW: Chat Listener
-    private val onChat: (ServiceRequest) -> Unit
+    private val onChat: (ServiceRequest) -> Unit,
+    private val onUploadPayment: (ServiceRequest) -> Unit
 ) : RecyclerView.Adapter<UserRequestAdapter.UserRequestViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserRequestViewHolder {
@@ -26,48 +26,45 @@ class UserRequestAdapter(
         holder.textRepairmanName.text = "To: ${request.repairmanName}"
         holder.textServiceType.text = "Service: ${request.serviceType}"
 
+        // Reset
         holder.buttonConfirmPayment.visibility = View.GONE
         holder.buttonRateRepairman.visibility = View.GONE
-        holder.buttonChatUser.visibility = View.GONE // Reset
+        holder.buttonChatUser.visibility = View.GONE
 
-        holder.buttonConfirmPayment.text = "Confirm Job Done"
-
+        // Logic
         when {
-            request.userConfirmedJobDone && request.repairmanConfirmedPayment -> {
-                // Job and Payment confirmed
-                if (request.userRated) {
-                    holder.textStatusUser.text = "Status: Fully Completed and Rated"
-                    holder.buttonChatUser.visibility = View.VISIBLE // Optional: Can chat in history
-                } else {
-                    holder.textStatusUser.text = "Status: Completed - Rate Now!"
-                    holder.buttonRateRepairman.visibility = View.VISIBLE
-                    holder.buttonChatUser.visibility = View.VISIBLE
-                }
+            // Case 1: All done
+            request.userRated -> {
+                holder.textStatusUser.text = "Status: Completed & Rated"
             }
-            request.userConfirmedJobDone -> {
-                holder.textStatusUser.text = "Status: Job Done - Awaiting Payment Confirmation"
-                holder.buttonChatUser.visibility = View.VISIBLE
+            // Case 2: Paid & Confirmed by Repairman -> Ready to Rate
+            request.repairmanConfirmedPayment -> {
+                holder.textStatusUser.text = "Job Done! Please Rate."
+                holder.buttonRateRepairman.visibility = View.VISIBLE
             }
-            request.status == "Accepted" -> {
-                holder.textStatusUser.text = "Status: Accepted (Tap when job is complete)"
+            // Case 3: Receipt Uploaded -> Waiting for Repairman
+            request.paymentProofImage.isNotEmpty() -> {
+                holder.textStatusUser.text = "Receipt Sent. Waiting for Confirmation."
+            }
+            // Case 4: Work Proof Sent by Repairman -> User needs to upload receipt
+            request.workProofImage.isNotEmpty() -> {
+                holder.textStatusUser.text = "Work Done. Please Upload Receipt."
                 holder.buttonConfirmPayment.visibility = View.VISIBLE
-                holder.buttonChatUser.visibility = View.VISIBLE // Allow chat
+                holder.buttonConfirmPayment.text = "Upload Receipt"
+
+                // Clicking this triggers the upload flow
+                holder.buttonConfirmPayment.setOnClickListener { onUploadPayment(request) }
             }
-            request.status == "Pending" -> {
-                holder.textStatusUser.text = "Status: Pending"
-                // Chat usually disabled while pending
-            }
-            request.status == "Declined" -> {
-                holder.textStatusUser.text = "Status: Declined"
+            // Case 5: Accepted/Ongoing
+            request.status == "Accepted" || request.status == "Ongoing" -> {
+                holder.textStatusUser.text = "Status: Ongoing"
+                holder.buttonChatUser.visibility = View.VISIBLE
             }
             else -> {
                 holder.textStatusUser.text = "Status: ${request.status}"
-                // Default show chat if not declined
-                if (request.status != "Declined") holder.buttonChatUser.visibility = View.VISIBLE
             }
         }
 
-        holder.buttonConfirmPayment.setOnClickListener { onConfirmPayment(request) }
         holder.buttonRateRepairman.setOnClickListener { onRate(request) }
         holder.buttonChatUser.setOnClickListener { onChat(request) }
     }
@@ -78,8 +75,10 @@ class UserRequestAdapter(
         val textRepairmanName: TextView = itemView.findViewById(R.id.textRepairmanName)
         val textServiceType: TextView = itemView.findViewById(R.id.textServiceType)
         val textStatusUser: TextView = itemView.findViewById(R.id.textStatusUser)
+
+        // This button handles the Upload Receipt action
         val buttonConfirmPayment: Button = itemView.findViewById(R.id.buttonConfirmPayment)
         val buttonRateRepairman: Button = itemView.findViewById(R.id.buttonRateRepairman)
-        val buttonChatUser: Button = itemView.findViewById(R.id.buttonChatUser) // NEW
+        val buttonChatUser: Button = itemView.findViewById(R.id.buttonChatUser)
     }
 }
