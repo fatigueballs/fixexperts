@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.database.*
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.storage.FirebaseStorage
 
 class UserActivityActivity : AppCompatActivity() {
 
@@ -39,6 +41,15 @@ class UserActivityActivity : AppCompatActivity() {
         "Electrician / Wiring",
         "Cleaning Service"
     )
+
+    private var selectedRequestForImage: ServiceRequest? = null
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let { imageUri ->
+            selectedRequestForImage?.let { request ->
+                uploadImageToFirebase(imageUri, request)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +80,11 @@ class UserActivityActivity : AppCompatActivity() {
                 intent.putExtra("CURRENT_USER_ID", actualUserId) // Passed as sender
                 intent.putExtra("OTHER_USER_NAME", request.repairmanName) // Chatting with Repairman
                 startActivity(intent)
-            }
+            },
+            onUploadPayment = { request ->   // <--- NEW CALLBACK
+                          selectedRequestForImage = request
+                          getContent.launch("image/*")
+                     }
         )
 
         recyclerViewRequests.adapter = adapter
@@ -79,6 +94,36 @@ class UserActivityActivity : AppCompatActivity() {
         setupStatusTabs()
 
         resolveUserIdAndLoadRequests()
+    }
+
+    private fun uploadImageToFirebase(imageUri: android.net.Uri, request: ServiceRequest) {
+        val progressDialog = android.app.ProgressDialog(this)
+        progressDialog.setTitle("Uploading Payment Proof...")
+        progressDialog.show()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("uploads/payment_${request.id}.jpg")
+
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    progressDialog.dismiss()
+                    updateRequestWithPaymentProof(request.id, uri.toString())
+                }
+            }
+            .addOnFailureListener {
+                progressDialog.dismiss()
+                Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateRequestWithPaymentProof(requestId: String, url: String) {
+        val updates = HashMap<String, Any>()
+        updates["userPaymentProofUrl"] = url
+
+        dbRef.child(requestId).updateChildren(updates)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Payment Proof Uploaded", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun setupCategorySpinner() {

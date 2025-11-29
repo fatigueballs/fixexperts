@@ -99,6 +99,15 @@
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/buttonUploadProof"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/spartan_extrabold"
+            android:text="Upload Proof"
+            android:backgroundTint="@color/primary_blue"
+            android:layout_marginTop="8dp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

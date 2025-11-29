@@ -12,7 +12,8 @@ class UserRequestAdapter(
     private val onConfirmPayment: (ServiceRequest) -> Unit,
     private val onRate: (ServiceRequest) -> Unit,
     // NEW: Chat Listener
-    private val onChat: (ServiceRequest) -> Unit
+    private val onChat: (ServiceRequest) -> Unit,
+    private val onUploadPayment: (ServiceRequest) -> Unit // NEW PARAMETER
 ) : RecyclerView.Adapter<UserRequestAdapter.UserRequestViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserRequestViewHolder {
@@ -31,6 +32,20 @@ class UserRequestAdapter(
         holder.buttonChatUser.visibility = View.GONE // Reset
 
         holder.buttonConfirmPayment.text = "Confirm Job Done"
+
+        holder.buttonUploadPayment.visibility = View.GONE
+
+        // Show button if Job is Done but Payment not confirmed yet
+        if (request.userConfirmedJobDone && !request.repairmanConfirmedPayment) {
+            holder.buttonUploadPayment.visibility = View.VISIBLE
+            if (request.userPaymentProofUrl.isNotEmpty()) {
+                holder.buttonUploadPayment.text = "Payment Proof Uploaded"
+            } else {
+                holder.buttonUploadPayment.text = "Upload Payment Proof"
+            }
+        }
+
+        holder.buttonUploadPayment.setOnClickListener { onUploadPayment(request) }
 
         when {
             request.userConfirmedJobDone && request.repairmanConfirmedPayment -> {
@@ -81,5 +96,6 @@ class UserRequestAdapter(
         val buttonConfirmPayment: Button = itemView.findViewById(R.id.buttonConfirmPayment)
         val buttonRateRepairman: Button = itemView.findViewById(R.id.buttonRateRepairman)
         val buttonChatUser: Button = itemView.findViewById(R.id.buttonChatUser) // NEW
+        val buttonUploadPayment: Button = itemView.findViewById(R.id.buttonUploadPayment)
     }
 }

@@ -61,6 +61,14 @@
             android:visibility="gone" />
 
         <Button
+            android:id="@+id/buttonUploadPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Upload Payment"
+            android:visibility="gone" />
+
+        <Button
             android:id="@+id/buttonRateRepairman"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

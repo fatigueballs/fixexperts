@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 class RepairmanRequestsActivity : AppCompatActivity() {
 
@@ -42,6 +45,15 @@ class RepairmanRequestsActivity : AppCompatActivity() {
         "Electrician / Wiring",
         "Cleaning Service"
     )
+
+    private var selectedRequestForImage: ServiceRequest? = null
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let { imageUri ->
+            selectedRequestForImage?.let { request ->
+                uploadImageToFirebase(imageUri, request, isWorkProof = true)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +85,40 @@ class RepairmanRequestsActivity : AppCompatActivity() {
         setupStatusTabs()
 
         resolveRepairmanIdAndLoadRequests()
+    }
+
+    private fun uploadImageToFirebase(imageUri: android.net.Uri, request: ServiceRequest, isWorkProof: Boolean) {
+        val progressDialog = android.app.ProgressDialog(this)
+        progressDialog.setTitle("Uploading...")
+        progressDialog.show()
+
+        val fileName = if (isWorkProof) "work_proof_${request.id}" else "payment_proof_${request.id}"
+        val storageRef = FirebaseStorage.getInstance().reference.child("uploads/$fileName.jpg")
+
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    progressDialog.dismiss()
+                    val downloadUrl = uri.toString()
+                    updateRequestWithImage(request.id, downloadUrl, isWorkProof)
+                }
+            }
+            .addOnFailureListener {
+                progressDialog.dismiss()
+                Toast.makeText(this, "Upload Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateRequestWithImage(requestId: String, url: String, isWorkProof: Boolean) {
+        val fieldToUpdate = if (isWorkProof) "repairmanProofUrl" else "userPaymentProofUrl"
+        val updates = HashMap<String, Any>()
+        updates[fieldToUpdate] = url
+
+        dbRef.child(requestId).updateChildren(updates)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Image Uploaded Successfully", Toast.LENGTH_SHORT).show()
+                // The listener in loadRequests() will automatically refresh the list
+            }
     }
 
     private fun setupCategorySpinner() {
@@ -192,6 +238,12 @@ class RepairmanRequestsActivity : AppCompatActivity() {
             intent.putExtra("CURRENT_USER_ID", actualRepairmanId) // Use repairman ID
             intent.putExtra("OTHER_USER_NAME", request.userName) // Chatting with User
             startActivity(intent)
+            return
+        }
+
+        if (action == "upload_proof") {
+            selectedRequestForImage = request
+            getContent.launch("image/*")
             return
         }
 

@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts // Import required
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage // Import required
 
 class ActivityFragment : Fragment() {
 
@@ -31,6 +33,16 @@ class ActivityFragment : Fragment() {
     private lateinit var adapter: UserRequestAdapter
     private lateinit var dbRef: DatabaseReference
     private var actualUserId: String? = null
+
+    // NEW: Variables for image upload
+    private var selectedRequestForImage: ServiceRequest? = null
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let { imageUri ->
+            selectedRequestForImage?.let { request ->
+                uploadImageToFirebase(imageUri, request)
+            }
+        }
+    }
 
     private var currentStatusFilter: String = "Ongoing"
     private var currentCategoryFilter: String = "All Categories"
@@ -49,14 +61,12 @@ class ActivityFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_activity, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Use 'view.findViewById' to find views within the fragment's layout
         recyclerViewRequests = view.findViewById(R.id.recyclerViewUserRequests)
         recyclerViewRequests.layoutManager = LinearLayoutManager(requireContext())
         tabLayoutStatus = view.findViewById(R.id.tabLayoutStatus)
@@ -65,17 +75,22 @@ class ActivityFragment : Fragment() {
         requestList = mutableListOf()
         filteredList = mutableListOf()
 
+        // FIXED: Added the 4th parameter (onUploadPayment) to the adapter
         adapter = UserRequestAdapter(
             filteredList,
             { request -> handleJobDoneConfirmation(request) },
             { request -> launchRatingActivity(request) },
             { request ->
-                // Chat Logic for Fragment
                 val intent = Intent(requireContext(), ChatActivity::class.java)
                 intent.putExtra("REQUEST_ID", request.id)
                 intent.putExtra("CURRENT_USER_ID", actualUserId)
                 intent.putExtra("OTHER_USER_NAME", request.repairmanName)
                 startActivity(intent)
+            },
+            { request ->
+                // Handle Upload Payment Action
+                selectedRequestForImage = request
+                getContent.launch("image/*")
             }
         )
 
@@ -88,8 +103,42 @@ class ActivityFragment : Fragment() {
         resolveUserIdAndLoadRequests()
     }
 
+    // NEW: Function to upload image to Firebase Storage
+    private fun uploadImageToFirebase(imageUri: android.net.Uri, request: ServiceRequest) {
+        val progressDialog = android.app.ProgressDialog(requireContext())
+        progressDialog.setTitle("Uploading Payment Proof...")
+        progressDialog.show()
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("uploads/payment_${request.id}.jpg")
+
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+                    progressDialog.dismiss()
+                    updateRequestWithPaymentProof(request.id, uri.toString())
+                }
+            }
+            .addOnFailureListener {
+                progressDialog.dismiss()
+                Toast.makeText(requireContext(), "Upload Failed", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    // NEW: Update Realtime Database with the image URL
+    private fun updateRequestWithPaymentProof(requestId: String, url: String) {
+        val updates = HashMap<String, Any>()
+        updates["userPaymentProofUrl"] = url
+
+        dbRef.child(requestId).updateChildren(updates)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Payment Proof Uploaded", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to save image URL", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun setupCategorySpinner() {
-        // Use requireContext() to get the context in a Fragment
         val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, ALL_SERVICES_FILTER)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategory.adapter = spinnerAdapter

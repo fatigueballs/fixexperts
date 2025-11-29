@@ -16,5 +16,7 @@ data class ServiceRequest(
     var userConfirmedJobDone: Boolean = false,
     var repairmanConfirmedPayment: Boolean = false,
     // NEW FIELD
-    var problemDescription: String = ""
+    var problemDescription: String = "",
+    var repairmanProofUrl: String = "",
+    var userPaymentProofUrl: String = ""
 )

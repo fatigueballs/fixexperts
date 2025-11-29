@@ -32,7 +32,20 @@ class RequestAdapter(
         holder.buttonDecline.visibility = View.GONE
         holder.buttonDone.visibility = View.GONE
         holder.buttonChat.visibility = View.GONE // Default to GONE
+        holder.buttonUploadProof.visibility = View.GONE
         holder.buttonDone.text = "Confirm Payment"
+
+        if (request.status == "Accepted" && !request.userConfirmedJobDone) {
+            holder.buttonUploadProof.visibility = View.VISIBLE
+            if (request.repairmanProofUrl.isNotEmpty()) {
+                holder.buttonUploadProof.text = "Work Proof Uploaded (Update?)"
+            } else {
+                holder.buttonUploadProof.text = "Upload Work Proof"
+            }
+        }
+
+        holder.buttonUploadProof.setOnClickListener { onAction(request, "upload_proof") }
+
 
         when {
             request.status == "Pending" -> {
@@ -121,5 +134,6 @@ class RequestAdapter(
         val buttonViewDetails: Button = itemView.findViewById(R.id.buttonViewDetails)
         // NEW Chat Button
         val buttonChat: Button = itemView.findViewById(R.id.buttonChat)
+        val buttonUploadProof: Button = itemView.findViewById(R.id.buttonUploadProof)
     }
 }
