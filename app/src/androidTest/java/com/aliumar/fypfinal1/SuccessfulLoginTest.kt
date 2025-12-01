@@ -39,13 +39,15 @@ class SuccessTest {
         // --- Test Case: TC_LOG_001 (User Login Successfully) ---
 
         onView(withId(R.id.loginEmail))
-            .perform(typeText("testuser@gmail.com"), closeSoftKeyboard())
+            .perform(typeText("alifhakim.anuar@student.gmi.edu.my"), closeSoftKeyboard())
 
         onView(withId(R.id.loginPassword))
-            .perform(typeText("1234"), closeSoftKeyboard())
+            .perform(typeText("123456"), closeSoftKeyboard())
 
         onView(withId(R.id.buttonLogin))
             .perform(click())
+
+        Thread.sleep(1000)
 
         onView(withId(R.id.etSearch))
             .check(matches(isDisplayed()))
@@ -60,13 +62,15 @@ class SuccessTest {
         // --- Test Case: TC_LOG_002 (Repair Man Login Successfully) ---
 
         onView(withId(R.id.loginEmail))
-            .perform(typeText("testrp@gmail.com"), closeSoftKeyboard())
+            .perform(typeText("aliumar.hishamtalib@student.gmi.edu.my"), closeSoftKeyboard())
 
         onView(withId(R.id.loginPassword))
-            .perform(typeText("1234"), closeSoftKeyboard())
+            .perform(typeText("12345678"), closeSoftKeyboard())
 
         onView(withId(R.id.buttonLogin))
             .perform(click())
+
+        Thread.sleep(1000)
 
         onView(withId(R.id.tvWelcomeGreeting))
             .check(matches(isDisplayed()))
@@ -88,6 +92,8 @@ class SuccessTest {
 
         onView(withId(R.id.buttonLogin))
             .perform(click())
+
+        Thread.sleep(1000)
 
         onView(withId(R.id.tvAdminTitle))
             .check(matches(isDisplayed()))
