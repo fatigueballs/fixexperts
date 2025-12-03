@@ -162,7 +162,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="12dp"
                         android:layout_height="12dp"
@@ -170,7 +169,6 @@
                         app:cardBackgroundColor="#FFC107"
                         app:cardElevation="0dp"
                         app:strokeWidth="0dp"/>
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -180,17 +178,12 @@
                         android:textStyle="bold"
                         android:layout_marginStart="6dp"/>
                 </LinearLayout>
-
-                <Space
-                    android:layout_width="24dp"
-                    android:layout_height="wrap_content" />
-
+                <Space android:layout_width="24dp" android:layout_height="wrap_content" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="12dp"
                         android:layout_height="12dp"
@@ -198,7 +191,6 @@
                         app:cardBackgroundColor="#E53935"
                         app:cardElevation="0dp"
                         app:strokeWidth="0dp"/>
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -208,10 +200,20 @@
                         android:textStyle="bold"
                         android:layout_marginStart="6dp"/>
                 </LinearLayout>
-
             </LinearLayout>
         </LinearLayout>
-
     </com.google.android.material.card.MaterialCardView>
+
+    <Button
+        android:id="@+id/buttonHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/spartan_extrabold"
+        android:text="Help?"
+        android:textColor="@color/primary_blue"
+        android:textSize="16sp"
+        android:textAllCaps="false"/>
 
 </LinearLayout>

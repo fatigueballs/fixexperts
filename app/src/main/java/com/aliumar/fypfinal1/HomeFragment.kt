@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button // Added import
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog // Added import
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,7 +26,6 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -42,21 +43,24 @@ class HomeFragment : Fragment() {
             tvGreeting.text = "Welcome, Guest!"
         }
 
-        // --- LOGOUT BUTTON LOGIC ---
         view.findViewById<ImageButton>(R.id.btnLogout).setOnClickListener {
-            // 1. Clear the shared preferences (logout session)
             sharedPref?.edit()?.clear()?.apply()
-
-            // 2. Navigate back to LoginActivity
             val intent = Intent(activity, LoginActivity::class.java)
-            // Clear the activity stack so the user cannot go back
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
 
-        // --- Set click listeners for the grid ---
+        // NEW: Help Button Logic
+        view.findViewById<Button>(R.id.btnHelp).setOnClickListener {
+            context?.let { ctx ->
+                AlertDialog.Builder(ctx)
+                    .setTitle("Help & Support")
+                    .setMessage("For any problems or issues, please contact us at:\n\nfixexpertshelp@gmail.com")
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+        }
 
-        // Helper function to create the specific intent
         fun getServiceIntent(serviceName: String): Intent {
             return Intent(activity, ChooseRepairmanActivity::class.java).apply {
                 putExtra("SERVICE_TYPE", serviceName)
@@ -83,13 +87,11 @@ class HomeFragment : Fragment() {
             startActivity(getServiceIntent("Kitchen Appliance Fix"))
         }
 
-        // "View All" still goes to the main category selection page
         view.findViewById<LinearLayout>(R.id.grid_view_all).setOnClickListener {
             startActivity(Intent(activity, UserServiceSelectionActivity::class.java))
         }
     }
 
-    // Copied directly from HomeActivity_User.kt
     private fun fetchAndSetGreeting(email: String, node: String, textView: TextView) {
         val dbRef = FirebaseDatabase.getInstance(DATABASE_URL).getReference(node)
 
@@ -114,11 +116,11 @@ class HomeFragment : Fragment() {
                         return
                     }
                 }
-                textView.text = "Welcome, User!" // Fallback
+                textView.text = "Welcome, User!"
             }
 
             override fun onCancelled(error: DatabaseError) {
-                textView.text = "Welcome!" // Fallback on error
+                textView.text = "Welcome!"
             }
         })
     }

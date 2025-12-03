@@ -4,9 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageButton // IMPORT ADDED
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog // Added import
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +28,6 @@ class HomeActivity_RM : AppCompatActivity() {
     private lateinit var calendarAdapter: CalendarAdapter
     private val calendar = Calendar.getInstance()
 
-    // List to hold requests for highlighting
     private val allRequests = mutableListOf<ServiceRequest>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,6 @@ class HomeActivity_RM : AppCompatActivity() {
         tvMonthYear = findViewById(R.id.tvMonthYear)
         recyclerCalendar = findViewById(R.id.recyclerCalendar)
 
-        // Setup Recycler Grid (7 columns for days of week)
         recyclerCalendar.layoutManager = GridLayoutManager(this, 7)
 
         if (loggedInEmail == null) {
@@ -54,11 +53,8 @@ class HomeActivity_RM : AppCompatActivity() {
         }
 
         fetchAndSetGreeting(loggedInEmail!!, "repairmen", tvGreeting)
-
-        // 1. Find Repairman ID first, then load requests
         findRepairmanIdAndLoadRequests()
 
-        // --- UPDATED: Calendar Navigation (Changed to ImageButton) ---
         findViewById<ImageButton>(R.id.btnPrevMonth).setOnClickListener {
             calendar.add(Calendar.MONTH, -1)
             updateCalendarUI()
@@ -68,28 +64,29 @@ class HomeActivity_RM : AppCompatActivity() {
             updateCalendarUI()
         }
 
-        // Initialize Calendar UI
         updateCalendarUI()
 
-        // Button Listeners
-
-        // This remains a standard Button
         findViewById<Button>(R.id.buttonViewRequests).setOnClickListener {
             startActivity(Intent(this, RepairmanRequestsActivity::class.java))
         }
 
-        // --- UPDATED: Edit Profile (Now an Icon in Header) ---
-        // Changed ID to btnEditProfile and type to ImageButton
         findViewById<ImageButton>(R.id.buttonEditProfile).setOnClickListener {
             startActivity(Intent(this, RepairmanSetupActivity::class.java))
         }
 
-        // --- UPDATED: Logout (Now an Icon in Header) ---
-        // Changed type to ImageButton
         findViewById<ImageButton>(R.id.btnLogout).setOnClickListener {
             sharedPref.edit().clear().apply()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
+        }
+
+        // NEW: Help Button Listener
+        findViewById<Button>(R.id.buttonHelp).setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Help & Support")
+                .setMessage("For any problems or issues, please contact us at:\n\nfixexpertshelp@gmail.com")
+                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                .show()
         }
     }
 
@@ -100,7 +97,7 @@ class HomeActivity_RM : AppCompatActivity() {
                     val r = snap.getValue(Repairman::class.java)
                     if (r != null && r.email.equals(loggedInEmail, ignoreCase = true)) {
                         repairmanId = snap.key
-                        listenForRequests() // Start fetching requests
+                        listenForRequests()
                         return
                     }
                 }
@@ -113,7 +110,6 @@ class HomeActivity_RM : AppCompatActivity() {
         if (repairmanId == null) return
         val requestsRef = FirebaseDatabase.getInstance(DATABASE_URL).getReference("serviceRequests")
 
-        // Fetch all requests for this repairman
         requestsRef.orderByChild("repairmanId").equalTo(repairmanId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -124,26 +120,20 @@ class HomeActivity_RM : AppCompatActivity() {
                             allRequests.add(req)
                         }
                     }
-                    updateCalendarUI() // Refresh calendar with new data
+                    updateCalendarUI()
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
 
     private fun updateCalendarUI() {
-        // 1. Update Month Text
         val sdf = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
         tvMonthYear.text = sdf.format(calendar.time)
 
-        // 2. Generate days for the grid
         val daysInMonth = ArrayList<CalendarAdapter.CalendarDay>()
         val tempCal = calendar.clone() as Calendar
 
-        // Go to 1st day of month
         tempCal.set(Calendar.DAY_OF_MONTH, 1)
-
-        // Get day of week (Sunday = 1, Monday = 2...)
         val firstDayOfWeek = tempCal.get(Calendar.DAY_OF_WEEK)
         val emptySlots = firstDayOfWeek - 1
 
@@ -153,7 +143,6 @@ class HomeActivity_RM : AppCompatActivity() {
 
         val maxDay = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-        // Loop through days 1..30/31
         for (i in 1..maxDay) {
             val dayString = i.toString()
             var statusForDay: String? = null
@@ -173,7 +162,6 @@ class HomeActivity_RM : AppCompatActivity() {
                     }
                 }
             }
-
             daysInMonth.add(CalendarAdapter.CalendarDay(dayString, statusForDay))
         }
 
